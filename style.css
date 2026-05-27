@@ -886,6 +886,197 @@
       color: var(--text-secondary);
     }
 
+    .history-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 32px 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Dark theme — full coverage */
+    [data-theme="dark"] .toss-card-title {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .metric-item .label {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .metric-item .value {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .metric-item .value .unit {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .chart-label {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .chart-bar-track {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .sim-row label {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .sim-range-header span {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .profile-info span.name {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .profile-info span.role {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .settings-row-left span.title {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .settings-row-left span.detail {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .settings-row-value {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .history-item {
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+    }
+
+    [data-theme="dark"] .history-item-left span.title {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .history-item-left span.date {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .history-item-right span.val {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .history-item-right span.cost {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .history-empty {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .nav-tab-btn span {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .nav-tab-btn.active span {
+      color: var(--toss-blue);
+    }
+
+    [data-theme="dark"] .simulation-header {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] #lblSimTemp,
+    [data-theme="dark"] #lblSimSmoke {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .hud-notice {
+      background: rgba(230, 237, 243, 0.92);
+      color: #191f28;
+    }
+
+    [data-theme="dark"] .status-bar {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .notice-badge {
+      background: var(--toss-red-light);
+      color: var(--toss-red);
+    }
+
+    [data-theme="dark"] .charge-status-text {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .charge-progress-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .car-card:active {
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+
+    [data-theme="dark"] .toss-btn.secondary {
+      background-color: rgba(49, 130, 246, 0.15);
+      color: #6ea8fe;
+    }
+
+    [data-theme="dark"] .toss-btn.secondary:hover {
+      background-color: rgba(49, 130, 246, 0.25);
+    }
+
+    [data-theme="dark"] .toss-btn.disabled {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .map-spot-card {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .map-spot-info span.name {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .map-spot-info span.location {
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .safety-status-row {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .badge.green {
+      background-color: var(--toss-green-light);
+      color: #4ade80;
+    }
+
+    [data-theme="dark"] .badge.amber {
+      background-color: var(--toss-amber-light);
+      color: #fbbf24;
+    }
+
+    [data-theme="dark"] .badge.red {
+      background-color: var(--toss-red-light);
+      color: #f87171;
+    }
+
+    [data-theme="dark"] .badge.blue {
+      background-color: var(--toss-blue-light);
+      color: #6ea8fe;
+    }
+
+    [data-theme="dark"] #iptCarPlate::placeholder {
+      color: var(--text-muted);
+    }
+
+    @media (min-width: 768px) {
+      [data-theme="dark"] .phone-container {
+        border-color: #2d333b;
+        outline-color: rgba(255, 255, 255, 0.1);
+      }
+    }
 
     /* SETTINGS PAGE STYLE */
     .profile-card {

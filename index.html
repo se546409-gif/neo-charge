@@ -369,19 +369,19 @@
           <div class="metric-grid">
             <div class="metric-item">
               <span class="label">총 충전 횟수</span>
-              <span class="value">12<span class="unit">회</span></span>
+              <span class="value" id="metricCount">0<span class="unit">회</span></span>
             </div>
             <div class="metric-item">
               <span class="label">총 사용 전력</span>
-              <span class="value">186<span class="unit">kWh</span></span>
+              <span class="value" id="metricKWh">0<span class="unit">kWh</span></span>
             </div>
             <div class="metric-item">
               <span class="label">총 주행 거리</span>
-              <span class="value">1,048<span class="unit">km</span></span>
+              <span class="value" id="metricKm">0<span class="unit">km</span></span>
             </div>
             <div class="metric-item">
               <span class="label">평균 충전량</span>
-              <span class="value">15.5<span class="unit">kWh</span></span>
+              <span class="value" id="metricAvg">0<span class="unit">kWh</span></span>
             </div>
           </div>
         </div>
@@ -438,56 +438,13 @@
         <!-- History Lists -->
         <div class="toss-card" style="padding: 16px 20px;">
           <div class="toss-card-title" style="font-size: 0.95rem; margin-bottom: 12px;">최근 충전 이력</div>
-          <div class="history-list-group">
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="title">무선 충전 1호기</span>
-                <span class="date">2024. 05. 24 오후 3:42</span>
-              </div>
-              <div class="history-item-right">
-                <span class="val">18.2 kWh</span>
-                <span class="cost">₩4,832</span>
-              </div>
-            </div>
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="title">무선 충전 2호기</span>
-                <span class="date">2024. 05. 22 오전 9:15</span>
-              </div>
-              <div class="history-item-right">
-                <span class="val">22.5 kWh</span>
-                <span class="cost">₩5,970</span>
-              </div>
-            </div>
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="title">무선 충전 1호기</span>
-                <span class="date">2024. 05. 20 오후 6:30</span>
-              </div>
-              <div class="history-item-right">
-                <span class="val">12.8 kWh</span>
-                <span class="cost">₩3,398</span>
-              </div>
-            </div>
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="title">무선 충전 3호기</span>
-                <span class="date">2024. 05. 18 오후 1:10</span>
-              </div>
-              <div class="history-item-right">
-                <span class="val">25.0 kWh</span>
-                <span class="cost">₩6,635</span>
-              </div>
-            </div>
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="title">무선 충전 1호기</span>
-                <span class="date">2024. 05. 15 오전 11:00</span>
-              </div>
-              <div class="history-item-right">
-                <span class="val">16.5 kWh</span>
-                <span class="cost">₩4,378</span>
-              </div>
+          <div class="history-list-group" id="historyListGroup">
+            <div class="history-empty" id="historyEmpty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity: 0.3;">
+                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z"/>
+              </svg>
+              <span>아직 충전 이력이 없습니다</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">시뮬레이터로 충전하면 이력이 기록됩니다</span>
             </div>
           </div>
         </div>

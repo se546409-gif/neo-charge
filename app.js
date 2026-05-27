@@ -190,6 +190,9 @@
     let chargingTimer = null;
     let chargeStartTimeout = null;
     let chargeCyclePower = 0.0;
+    let chargeStartTime = null;
+    let chargeStartBattery = 0;
+    const chargeHistory = [];
     
     // Live clock updating
     function updateClock() {
@@ -575,6 +578,8 @@
       }
 
       setChargingState('charging');
+      chargeStartTime = new Date();
+      chargeStartBattery = batteryLevel;
       logNfc('[충전 개시] 안전 전원 공급 장치 활성화 완료');
       logNfc('[충전소] 무선 충전 전원 전송 시작');
 
@@ -610,6 +615,26 @@
       
       if (chargingTimer) clearInterval(chargingTimer);
       
+      // Record charge history
+      if (chargeStartTime) {
+        const kWhUsed = ((batteryLevel - chargeStartBattery) * 0.55).toFixed(1);
+        const costKRW = Math.round(kWhUsed * 265);
+        const spotNum = Math.floor(Math.random() * 3) + 1;
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')} ${now.getHours() < 12 ? '오전' : '오후'} ${now.getHours() < 12 ? now.getHours() : now.getHours() - 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        if (parseFloat(kWhUsed) > 0) {
+          chargeHistory.unshift({
+            spot: `무선 충전 ${spotNum}호기`,
+            date: dateStr,
+            kWh: kWhUsed,
+            cost: `₩${costKRW.toLocaleString()}`
+          });
+          renderChargeHistory();
+        }
+        chargeStartTime = null;
+      }
+      
       if (reason === 'user') {
         setChargingState('ready_to_charge');
         logNfc('[충전 중단] 사용자 취소 요청으로 수동 정지');
@@ -624,6 +649,45 @@
         showNotice("충전 완료");
         if (btnSimRetryCharge) btnSimRetryCharge.style.display = 'block';
       }
+    }
+
+    function renderChargeHistory() {
+      const container = document.getElementById('historyListGroup');
+      const emptyEl = document.getElementById('historyEmpty');
+      if (emptyEl) emptyEl.remove();
+      
+      // Remove existing items and rebuild
+      container.querySelectorAll('.history-item').forEach(el => el.remove());
+      
+      chargeHistory.slice(0, 10).forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'history-item';
+        el.innerHTML = `
+          <div class="history-item-left">
+            <span class="title">${item.spot}</span>
+            <span class="date">${item.date}</span>
+          </div>
+          <div class="history-item-right">
+            <span class="val">${item.kWh} kWh</span>
+            <span class="cost">${item.cost}</span>
+          </div>`;
+        container.appendChild(el);
+      });
+
+      // Update summary metrics
+      const totalCount = chargeHistory.length;
+      const totalKWh = chargeHistory.reduce((sum, h) => sum + parseFloat(h.kWh), 0);
+      const totalKm = Math.round(totalKWh * 5.63);
+      const avgKWh = totalCount > 0 ? (totalKWh / totalCount).toFixed(1) : 0;
+
+      const elCount = document.getElementById('metricCount');
+      const elKWh = document.getElementById('metricKWh');
+      const elKm = document.getElementById('metricKm');
+      const elAvg = document.getElementById('metricAvg');
+      if (elCount) elCount.innerHTML = `${totalCount}<span class="unit">회</span>`;
+      if (elKWh) elKWh.innerHTML = `${totalKWh.toFixed(1)}<span class="unit">kWh</span>`;
+      if (elKm) elKm.innerHTML = `${totalKm.toLocaleString()}<span class="unit">km</span>`;
+      if (elAvg) elAvg.innerHTML = `${avgKWh}<span class="unit">kWh</span>`;
     }
 
     function retryCharging() {
