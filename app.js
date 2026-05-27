@@ -864,3 +864,29 @@
     // Battery level setup in status bar
     statusBatteryFill.style.width = '85%';
 
+    // Theme toggle
+    const chkThemeDark = document.getElementById('chkThemeDark');
+    const themeDetail = document.getElementById('themeDetail');
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('neo-charge-theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.querySelector('.phone-container').setAttribute('data-theme', 'dark');
+      chkThemeDark.checked = true;
+      themeDetail.textContent = '다크 모드';
+    }
+
+    chkThemeDark.addEventListener('change', () => {
+      sound.playClick();
+      const container = document.querySelector('.phone-container');
+      if (chkThemeDark.checked) {
+        container.setAttribute('data-theme', 'dark');
+        themeDetail.textContent = '다크 모드';
+        localStorage.setItem('neo-charge-theme', 'dark');
+      } else {
+        container.removeAttribute('data-theme');
+        themeDetail.textContent = '라이트 모드';
+        localStorage.setItem('neo-charge-theme', 'light');
+      }
+    });
+

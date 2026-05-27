@@ -507,7 +507,7 @@
         </div>
 
         <!-- Settings Groups -->
-        <div class="toss-card" style="padding: 8px 0;">
+        <div class="toss-card settings-card">
           <div class="settings-list-group">
             <div class="settings-row" id="rowManageNfc">
               <div class="settings-row-left">
@@ -544,31 +544,17 @@
           </div>
         </div>
 
-        <div class="toss-card" style="padding: 8px 0;">
+        <div class="toss-card settings-card">
           <div class="settings-list-group">
             <div class="settings-row">
               <div class="settings-row-left">
-                <span class="title">단위 설정</span>
-                <span class="detail">km / miles, kWh / kW</span>
-              </div>
-              <div class="settings-row-value">
-                km, kWh
-                <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-row-left">
                 <span class="title">테마 설정</span>
-                <span class="detail">라이트 / 다크 모드</span>
+                <span class="detail" id="themeDetail">라이트 모드</span>
               </div>
-              <div class="settings-row-value">
-                라이트
-                <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </div>
+              <label class="ios-switch">
+                <input type="checkbox" id="chkThemeDark" role="switch" aria-label="테마 설정">
+                <span class="ios-slider"></span>
+              </label>
             </div>
           </div>
         </div>

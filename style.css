@@ -25,6 +25,82 @@
       --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* Dark Theme */
+    [data-theme="dark"] {
+      --bg-body: #0d1117;
+      --bg-card: #161b22;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --toss-blue-light: #1a3a5c;
+      --toss-green-light: #1a3d2a;
+      --toss-red-light: #3d1a1a;
+      --toss-amber-light: #3d2a1a;
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .toss-card {
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    [data-theme="dark"] .settings-row {
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+
+    [data-theme="dark"] .settings-row:active {
+      background-color: rgba(255,255,255,0.04);
+    }
+
+    [data-theme="dark"] .bottom-nav-bar {
+      background-color: rgba(22, 27, 34, 0.92);
+      border-top-color: rgba(255,255,255,0.08);
+    }
+
+    [data-theme="dark"] .phone-container {
+      background: var(--bg-body);
+    }
+
+    [data-theme="dark"] .profile-avatar {
+      box-shadow: 0 4px 12px rgba(49, 130, 246, 0.35);
+    }
+
+    [data-theme="dark"] .ios-slider {
+      background-color: #3a3a3c;
+    }
+
+    [data-theme="dark"] .sim-range-input {
+      background: #3a3a3c;
+    }
+
+    [data-theme="dark"] .sim-range-input::-webkit-slider-thumb {
+      background: #e6edf3;
+      border-color: #6e7681;
+    }
+
+    [data-theme="dark"] dialog#dlgPlateInput {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] #iptCarPlate {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] #iptCarPlate:focus {
+      border-color: var(--toss-blue) !important;
+      background-color: rgba(49, 130, 246, 0.15) !important;
+    }
+
+    [data-theme="dark"] .simulation-panel {
+      background: var(--bg-card);
+    }
+
+    [data-theme="dark"] .plate-backdrop {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -848,6 +924,10 @@
       color: var(--text-secondary);
     }
 
+    .settings-card {
+      padding: 4px 20px;
+    }
+
     .settings-list-group {
       display: flex;
       flex-direction: column;
@@ -857,7 +937,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 0;
+      padding: 16px 0;
       cursor: pointer;
       border-bottom: 1px solid #f2f4f6;
     }
