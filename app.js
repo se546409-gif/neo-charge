@@ -693,6 +693,15 @@
     function retryCharging() {
       sound.playClick();
       if (chargingState === 'ready_to_charge' && isAligned) {
+        // Reset battery for a fresh charging session
+        batteryLevel = 20;
+        currentRange = Math.floor(batteryLevel * 5.63);
+        valBattery.textContent = batteryLevel;
+        valRange.textContent = currentRange;
+        statusBatteryFill.style.width = `${batteryLevel}%`;
+        chargeProgressBar.style.width = `${batteryLevel}%`;
+        valTime.textContent = `${Math.ceil((100 - batteryLevel) * 0.8)}분 남음`;
+
         startChargingSession();
         if (btnSimRetryCharge) btnSimRetryCharge.style.display = 'none';
         logNfc('[충전 재개] 관리자 제어판에서 충전 다시하기 실행');

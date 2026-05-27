@@ -758,16 +758,16 @@
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      background: #ffffff;
+      background: var(--bg-card);
       border-radius: 16px;
-      border: 1px solid #f2f4f6;
+      border: 1px solid var(--bg-body);
       margin-bottom: 12px;
       cursor: pointer;
       transition: var(--transition-base);
     }
 
     .map-spot-card:hover {
-      border-color: #ced4da;
+      border-color: var(--toss-blue);
       transform: translateY(-2px);
     }
 
@@ -1005,6 +1005,20 @@
       color: var(--toss-red);
     }
 
+    [data-theme="dark"] .header-action-btn {
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .app-title-area h1 {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .car-card {
+      color: var(--text-primary);
+    }
+
     [data-theme="dark"] .charge-status-text {
       color: var(--text-primary);
     }
@@ -1033,6 +1047,11 @@
 
     [data-theme="dark"] .map-spot-card {
       border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .map-spot-card.selected {
+      border-color: var(--toss-blue);
+      background-color: rgba(49, 130, 246, 0.15);
     }
 
     [data-theme="dark"] .map-spot-info span.name {
