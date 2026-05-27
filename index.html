@@ -8,1203 +8,8 @@
   <!-- Pretendard Variable Font (Standard for Premium Korean Apps) -->
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   
-  <style>
-    :root {
-      /* Toss Color Palette */
-      --bg-body: #f2f4f6;
-      --bg-card: #ffffff;
-      --text-primary: #191f28;
-      --text-secondary: #4e5968;
-      --text-muted: #8b95a1;
-      
-      /* Accent Colors */
-      --toss-blue: #3182f6;
-      --toss-blue-hover: #1b64da;
-      --toss-blue-light: #e8f3ff;
-      --toss-green: #2da854;
-      --toss-green-light: #eaf8ee;
-      --toss-red: #f04438;
-      --toss-red-light: #feecee;
-      --toss-amber: #ffad1f;
-      --toss-amber-light: #fff8eb;
-      
-      /* UI Specs */
-      --border-radius-card: 24px;
-      --border-radius-btn: 14px;
-      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-      --font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-family);
-      letter-spacing: -0.03em; /* Essential for Korean UI premium look */
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    /* Prevent text selection on interactive chrome only, not content */
-    button, .nav-tab-btn, .toss-btn, .header-action-btn, .simulation-header, .map-spot-card, .settings-row {
-      user-select: none;
-    }
-
-    body {
-      background-color: #e5e8eb;
-      color: var(--text-primary);
-      min-block-size: 100dvb;
-      display: grid;
-      place-items: center;
-      overflow-x: hidden;
-    }
-
-    /* Device Container */
-    .phone-container {
-      width: 100%;
-      max-width: 412px;
-      height: 100dvb;
-      max-height: 896px;
-      background-color: var(--bg-body);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-    }
-
-    /* Desktop Outer Phone Frame Styling */
-    @media (min-width: 768px) {
-      body {
-        padding: 1.5rem 0;
-      }
-      .phone-container {
-        border-radius: 40px;
-        border: 10px solid #ffffff;
-        outline: 1px solid #d1d6db;
-      }
-    }
-
-    .status-bar {
-      display: none;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 16px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      background-color: transparent;
-      color: var(--text-primary);
-      flex-shrink: 0;
-    }
-
-    .phone-container.alarm-active .status-bar {
-      display: flex;
-      background-color: var(--toss-red);
-      color: #ffffff;
-    }
-
-    .status-bar-icons {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .status-battery-icon {
-      width: 22px;
-      height: 11px;
-      border: 1.5px solid var(--text-primary);
-      border-radius: 3px;
-      position: relative;
-      padding: 1px;
-    }
-
-    .status-battery-icon::after {
-      content: '';
-      position: absolute;
-      right: -3px;
-      top: 2px;
-      width: 2px;
-      height: 4.5px;
-      background: var(--text-primary);
-      border-radius: 0 1px 1px 0;
-    }
-
-    .status-battery-fill {
-      height: 100%;
-      background: var(--toss-green);
-      border-radius: 1px;
-      width: 85%;
-    }
-
-    .app-header {
-      padding: 24px 24px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-shrink: 0;
-    }
-
-    .app-title-area p {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .app-title-area p span.team-tag {
-      background: #e8eaed;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-right: 4px;
-    }
-
-    .app-title-area h1 {
-      font-size: 1.45rem;
-      font-weight: 800;
-      line-height: 1.45;
-    }
-
-    #bearRow.hidden {
-      display: none;
-    }
-
-    /* Header Audio Button */
-    .header-action-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: #ffffff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: var(--transition-base);
-    }
-    
-    .header-action-btn:active {
-      transform: scale(0.92);
-      background: var(--bg-body);
-    }
-
-    /* Emergency Alert Modal Dialog (Centered inside phone container) */
-    dialog#dlgEmergency {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.95);
-      margin: 0;
-      border: none;
-      border-radius: 24px;
-      background: #ffffff;
-      max-width: 320px;
-      width: 88%;
-      padding: 28px 24px;
-      box-shadow: 0 20px 50px rgba(240, 68, 56, 0.18);
-      outline: none;
-      z-index: 180;
-      
-      opacity: 0;
-      transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    
-    dialog#dlgEmergency[open] {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
-    
-    @starting-style {
-      dialog#dlgEmergency[open] {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
-      }
-    }
-    
-    /* Custom container backdrop */
-    .emergency-backdrop {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15, 20, 28, 0.55);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 175;
-    }
-    
-    .phone-container.alarm-active .emergency-backdrop {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .phone-container.alarm-active .status-bar {
-      background-color: var(--toss-red);
-      color: #ffffff;
-    }
-    
-    .phone-container.alarm-active .status-battery-icon {
-      border-color: #ffffff;
-    }
-    
-    .phone-container.alarm-active .status-battery-icon::after {
-      background: #ffffff;
-    }
-
-    /* Alignment Warning Modal Dialog (Centered inside phone container) */
-    dialog#dlgAlignWarning {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.95);
-      margin: 0;
-      border: none;
-      border-radius: 24px;
-      background: #ffffff;
-      max-width: 320px;
-      width: 88%;
-      padding: 28px 24px;
-      box-shadow: 0 20px 50px rgba(217, 119, 6, 0.15);
-      outline: none;
-      z-index: 180;
-      opacity: 0;
-      transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    
-    dialog#dlgAlignWarning[open] {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
-    
-    @starting-style {
-      dialog#dlgAlignWarning[open] {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
-      }
-    }
-
-    /* Alignment backdrop */
-    .align-backdrop {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15, 20, 28, 0.45);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 170;
-    }
-    
-    .phone-container.align-warning-active .align-backdrop {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    @keyframes pulse-amber-icon {
-      from { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
-      to { transform: scale(1.08); box-shadow: 0 0 12px 6px rgba(217, 119, 6, 0); }
-    }
-
-    @keyframes pulse-red-icon {
-      from { transform: scale(1); box-shadow: 0 0 0 0 rgba(240, 68, 56, 0.4); }
-      to { transform: scale(1.08); box-shadow: 0 0 12px 6px rgba(240, 68, 56, 0); }
-    }
-
-    @keyframes charging-glow-anim {
-      0% { opacity: 1; }
-      50% { opacity: 0.6; }
-      100% { opacity: 1; }
-    }
-
-    /* Main Multi-Page Wrapper */
-    .page-views-wrapper {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-    }
-
-    /* Page View Base */
-    .page-view {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow-y: auto;
-      padding: 0 16px 150px; /* leaves room for bottom nav and simulation drawer */
-      display: none;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-      scrollbar-width: none;
-    }
-
-    .page-view::-webkit-scrollbar {
-      display: none;
-    }
-
-    .page-view.active {
-      display: block;
-    }
-
-    .page-view.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Card Component */
-    .toss-card {
-      background-color: var(--bg-card);
-      border-radius: var(--border-radius-card);
-      padding: 24px;
-      box-shadow: var(--card-shadow);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .toss-card-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .toss-card-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-      margin-top: -12px;
-      margin-bottom: 16px;
-    }
-
-    /* Badge Component */
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 8px;
-    }
-
-    .badge.green {
-      background-color: var(--toss-green-light);
-      color: var(--toss-green);
-    }
-
-    .badge.red {
-      background-color: var(--toss-red-light);
-      color: var(--toss-red);
-    }
-
-    .badge.blue {
-      background-color: var(--toss-blue-light);
-      color: var(--toss-blue);
-    }
-
-    .badge.amber {
-      background-color: var(--toss-amber-light);
-      color: var(--toss-amber);
-    }
-
-    /* Collapsible My Car Card Styles */
-    .car-card {
-      padding: 20px 24px;
-      cursor: pointer;
-      transition: background-color 0.2s ease, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .car-card:active {
-      background-color: #f9fafb;
-    }
-
-    #carPlateAccordion {
-      width: 100%;
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-    }
-
-    .car-card.expanded #carPlateAccordion {
-      max-height: 80px; /* enough space for #carPlateContainer */
-      opacity: 1;
-    }
-
-    .car-card #chevronCar {
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .car-card.expanded #chevronCar {
-      transform: rotate(180deg);
-    }
-
-    .car-image-container {
-      width: 100%;
-      height: 180px;
-      display: grid;
-      place-items: center;
-      position: relative;
-      margin-bottom: 8px;
-    }
-
-    .car-image {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
-      border-radius: 16px;
-    }
-
-    /* Proximity/Alignment Ring overlay */
-    .alignment-ring-hud {
-      position: absolute;
-      bottom: 0px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(25, 31, 40, 0.85);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      backdrop-filter: blur(5px);
-    }
-
-    .alignment-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--toss-red);
-    }
-
-    .alignment-dot.aligned {
-      background: var(--toss-green);
-      box-shadow: 0 0 8px var(--toss-green);
-      animation: pulse-dot-key 1.5s infinite;
-    }
-
-    @keyframes pulse-dot-key {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-
-    /* Progress bar */
-    .charge-progress-track {
-      background: #f2f4f6;
-      height: 8px;
-      border-radius: 4px;
-      margin: 16px 0 20px;
-      overflow: hidden;
-      display: none;
-    }
-
-    .charge-progress-bar {
-      height: 100%;
-      background: var(--toss-blue);
-      width: 76%;
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-
-    .charge-card.charging .charge-progress-track {
-      display: block;
-    }
-
-    .charge-card.charging .charge-progress-bar {
-      animation: charging-glow-anim 2s infinite ease-in-out;
-    }
-
-    /* Toss Primary Action Button */
-    .toss-btn {
-      width: 100%;
-      height: 56px;
-      border: none;
-      border-radius: var(--border-radius-btn);
-      background-color: var(--toss-blue);
-      color: #ffffff;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: var(--transition-base);
-      box-shadow: 0 4px 12px rgba(49, 130, 246, 0.15);
-    }
-
-    .toss-btn:hover {
-      background-color: var(--toss-blue-hover);
-    }
-
-    .toss-btn:active {
-      transform: scale(0.97);
-    }
-
-    .toss-btn.secondary {
-      background-color: var(--toss-blue-light);
-      color: var(--toss-blue);
-      box-shadow: none;
-    }
-    
-    .toss-btn.secondary:hover {
-      background-color: #dbeaff;
-    }
-
-    .toss-btn.danger {
-      background-color: var(--toss-red);
-      box-shadow: 0 4px 12px rgba(240, 68, 56, 0.15);
-    }
-
-    .toss-btn.disabled {
-      background-color: #e5e8eb;
-      color: var(--text-muted);
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    /* Numerical Statistics Grid */
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .metric-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .metric-item span.label {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .metric-item span.value {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .metric-item span.value span.unit {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-left: 2px;
-      font-weight: 500;
-    }
-
-    /* Safety Info Card Layout */
-    .safety-status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-    }
-    
-    .safety-status-row:not(:last-child) {
-      border-bottom: 1px solid #f2f4f6;
-    }
-
-    .safety-info-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .safety-info-left span.title {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
-    .safety-info-left span.detail {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    /* NFC Logs card */
-    .nfc-logs-area {
-      background: #f8f9fa;
-      border-radius: 12px;
-      padding: 12px;
-      height: 90px;
-      overflow-y: auto;
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .nfc-log-entry {
-      line-height: 1.4;
-      border-left: 2px solid #ced4da;
-      padding-left: 6px;
-    }
-
-    .nfc-log-entry.auth-success {
-      border-left-color: var(--toss-green);
-      color: #1e7e34;
-    }
-
-
-    /* MAP PAGE COMPONENT STYLE */
-    .map-frame-container {
-      width: 100%;
-      height: 240px;
-      border-radius: 20px;
-      overflow: hidden;
-      position: relative;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      border: 1px solid #e5e8eb;
-    }
-
-    .map-svg {
-      width: 100%;
-      height: 100%;
-      background-color: #f4f3f0;
-    }
-
-    .map-spot-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #f2f4f6;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: var(--transition-base);
-    }
-
-    .map-spot-card:hover {
-      border-color: #ced4da;
-      transform: translateY(-2px);
-    }
-
-    .map-spot-card.selected {
-      border-color: var(--toss-blue);
-      background-color: var(--toss-blue-light);
-    }
-
-    .map-spot-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .map-spot-info span.name {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .map-spot-info span.location {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-
-    /* HISTORY PAGE STYLE */
-    .chart-container {
-      height: 120px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding: 16px 0 0;
-      gap: 12px;
-    }
-
-    .chart-bar-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .chart-bar-track {
-      width: 24px;
-      height: 70px;
-      background-color: #f2f4f6;
-      border-radius: 6px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chart-bar-fill {
-      width: 100%;
-      background-color: var(--toss-blue-hover);
-      border-radius: 6px;
-      position: absolute;
-      bottom: 0;
-      transition: height 0.5s ease;
-    }
-
-    .chart-bar-wrapper.active .chart-bar-fill {
-      background-color: var(--toss-blue);
-    }
-
-    .chart-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-
-    .history-list-group {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      border-bottom: 1px solid #f2f4f6;
-    }
-
-    .history-item-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .history-item-left span.title {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .history-item-left span.date {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .history-item-right {
-      text-align: right;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .history-item-right span.val {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .history-item-right span.cost {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-
-    /* SETTINGS PAGE STYLE */
-    .profile-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 0;
-    }
-
-    .profile-avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--toss-blue), #9b51e0);
-      display: grid;
-      place-items: center;
-      color: #fff;
-      font-weight: 800;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 12px rgba(49, 130, 246, 0.2);
-    }
-
-    .profile-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .profile-info span.name {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .profile-info span.role {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .settings-list-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .settings-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 0;
-      cursor: pointer;
-      border-bottom: 1px solid #f2f4f6;
-    }
-
-    .settings-row:active {
-      background-color: #fafafa;
-    }
-
-    .settings-row-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .settings-row-left span.title {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-    
-    .settings-row-left span.detail {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .settings-row-value {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-
-    /* SIMULATION CONTROL PANEL DRAWER */
-    .simulation-panel {
-      position: absolute;
-      bottom: 72px; /* Anchor right above bottom navigation bar */
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border-radius: 24px 24px 0 0;
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.06);
-      z-index: 120;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-      border: 1px solid #e5e8eb;
-      border-bottom: none;
-    }
-
-    .simulation-header {
-      width: 100%;
-      padding: 14px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      border: none;
-      border-bottom: 1px solid #f2f4f6;
-      background: none;
-      font: inherit;
-      color: inherit;
-    }
-
-    .simulation-header h4 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-primary);
-    }
-
-    .simulation-toggle-icon {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      transition: transform 0.3s ease;
-    }
-
-    /* Collapsed state */
-    .simulation-panel.collapsed {
-      transform: translateY(calc(100% - 47px));
-    }
-
-    .simulation-panel.collapsed .simulation-toggle-icon {
-      transform: rotate(180deg);
-    }
-
-    .simulation-content {
-      padding: 16px 24px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      max-height: 280px;
-      overflow-y: auto;
-    }
-
-    .sim-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sim-row label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    /* iOS style Toggle Switch */
-    .ios-switch {
-      position: relative;
-      display: inline-block;
-      width: 46px;
-      height: 28px;
-    }
-
-    .ios-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .ios-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #e5e5ea;
-      transition: .3s;
-      border-radius: 34px;
-    }
-
-    .ios-slider:before {
-      position: absolute;
-      content: "";
-      height: 24px;
-      width: 24px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-
-    input:checked + .ios-slider {
-      background-color: var(--toss-blue);
-    }
-
-    input:checked + .ios-slider:before {
-      transform: translateX(18px);
-    }
-
-    /* Range slider inputs */
-    .sim-range-container {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .sim-range-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .sim-range-input {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 5px;
-      border-radius: 3px;
-      background: #e5e5ea;
-      outline: none;
-    }
-
-    .sim-range-input::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      cursor: pointer;
-      border: 0.5px solid #d1d1d6;
-    }
-
-
-    /* BOTTOM NAVIGATION TAB BAR */
-    .bottom-nav-bar {
-      height: 72px;
-      background-color: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid #e5e8eb;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding-bottom: 8px; /* Room for phone home-bar */
-      position: sticky;
-      bottom: 0;
-      z-index: 130;
-      flex-shrink: 0;
-    }
-
-    .nav-tab-btn {
-      background: none;
-      border: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      color: var(--text-muted);
-      cursor: pointer;
-      width: 64px;
-      transition: var(--transition-base);
-    }
-
-    .nav-tab-btn svg {
-      width: 22px;
-      height: 22px;
-      color: var(--text-muted);
-      transition: var(--transition-base);
-    }
-
-    .nav-tab-btn span {
-      font-size: 0.7rem;
-      font-weight: 700;
-      line-height: 1;
-      transition: var(--transition-base);
-    }
-
-    /* Active State bottom navigation */
-    .nav-tab-btn.active {
-      color: var(--toss-blue);
-    }
-
-    .nav-tab-btn.active svg {
-      color: var(--toss-blue);
-    }
-
-    /* Visual HUD Alert */
-    .hud-notice {
-      position: absolute;
-      top: 65px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-20px);
-      background: rgba(25, 31, 40, 0.9);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      z-index: 160;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .hud-notice.visible {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    #iptCarPlate {
-      box-shadow: none;
-    }
-    #iptCarPlate:focus {
-      border-color: var(--toss-blue) !important;
-      background-color: #dbeaff !important;
-      box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.12) !important;
-    }
-
-    /* Plate input dialog styles */
-    dialog#dlgPlateInput {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.95);
-      margin: 0;
-      border: none;
-      border-radius: 24px;
-      background: #ffffff;
-      max-width: 320px;
-      width: 88%;
-      padding: 28px 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-      outline: none;
-      z-index: 180;
-      opacity: 0;
-      transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    
-    dialog#dlgPlateInput[open] {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
-    
-    @starting-style {
-      dialog#dlgPlateInput[open] {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
-      }
-    }
-
-    /* Plate backdrop */
-    .plate-backdrop {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15, 20, 28, 0.4);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 170;
-    }
-    
-    .phone-container.plate-input-active .plate-backdrop {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
+  <script src="app.js" defer></script>
 </head>
 <body>
 
@@ -1234,13 +39,13 @@
         
         <div style="display:flex; flex-direction:column; gap:6px; text-align:center;">
           <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--toss-red);">소방 안전 경보 발령</h3>
-          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; font-weight: 500;" id="dlgEmergencyDesc">차량 온도 또는 연기 농도가 기준치를 초과하여 충전소 전원을 강제 차단했습니다.</p>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; font-weight: 500;" id="dlgEmergencyDesc">충전 패드 온도 또는 연기 농도가 기준치를 초과하여 충전소 전원을 강제 차단했습니다.</p>
         </div>
 
         <!-- Live metrics in Modal -->
         <div style="display:flex; flex-direction:column; gap:8px; width: 100%; margin: 4px 0;">
           <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 14px; background:#f9fafb; border-radius:12px; font-size:0.85rem;" id="dlgEmergencyTempRow">
-            <span style="font-weight:600; color:var(--text-secondary);">차량 온도</span>
+            <span style="font-weight:600; color:var(--text-secondary);">충전 패드 온도</span>
             <span style="font-weight:700;" id="dlgEmergencyTempVal">24.5°C</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 14px; background:#f9fafb; border-radius:12px; font-size:0.85rem;" id="dlgEmergencySmokeRow">
@@ -1404,15 +209,17 @@
 
         <!-- Card 1.2: Wireless Charging Controller -->
         <div class="toss-card charge-card" id="cardCharge">
-          <div class="toss-card-title">
-            <span>무선 충전</span>
-            <span id="chargeBadge" class="badge green">주차 완료</span>
+          <div class="toss-card-title" style="margin-bottom: 0;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge blue" id="chargeBadge">대기 중</span>
+                <span style="font-size: 1.05rem; font-weight: 700;" id="chargeHeadline">올바른 주차 위치 확인 및 NFC 인증을 대기하고 있습니다.</span>
+              </div>
+            </div>
           </div>
-          
-          <div class="toss-card-subtitle" id="chargeHeadline">차량이 충전 패드 위에 올바르게 주차되었습니다.</div>
-          
-          <div id="chargeProgressTrack" class="charge-progress-track">
-            <div id="chargeProgressBar" class="charge-progress-bar"></div>
+
+          <div class="charge-progress-track" id="chargeProgressTrack">
+            <div class="charge-progress-bar" id="chargeProgressBar"></div>
           </div>
 
           <div class="metric-grid">
@@ -1421,7 +228,7 @@
               <span class="value"><span id="valBattery">76</span><span class="unit">%</span></span>
             </div>
             <div class="metric-item">
-              <span class="label">주행 가능 거리</span>
+              <span class="label">예상 주행 거리</span>
               <span class="value"><span id="valRange">428</span><span class="unit">km</span></span>
             </div>
             <div class="metric-item">
@@ -1429,322 +236,352 @@
               <span class="value"><span id="valPower">0.0</span><span class="unit">kW</span></span>
             </div>
             <div class="metric-item">
-              <span class="label">남은 시간</span>
-              <span class="value"><span id="valTime">--</span><span class="unit"></span></span>
+              <span class="label">충전 예상 시간</span>
+              <span class="value" id="valTime">--</span>
             </div>
           </div>
 
-          <button class="toss-btn" id="btnAction" style="margin-top: 24px;">
-            무선 충전 시작하기
-          </button>
+          <button class="toss-btn disabled" id="btnAction" style="margin-top: 20px;">NFC 인증 완료 시 충전 가능</button>
         </div>
 
         <!-- Card 1.3: Fire Safety Status -->
-        <div class="toss-card" id="cardSafety">
-          <div class="toss-card-title">
-            <span>차량 안전 상태</span>
-            <span id="safetyBadge" class="badge green">안전</span>
-          </div>
-          <div class="toss-card-subtitle" id="safetyHeadline">화재 감지 및 환경 안전 상태 진단 중</div>
-
-          <div class="safety-status-row">
-            <div class="safety-info-left">
-              <span class="title">차량 온도</span>
-              <span class="detail" id="lblTempDetail">측정 온도 정상</span>
+        <div class="toss-card" id="cardSafety" style="border-left: 4px solid var(--toss-green);">
+          <div class="toss-card-title" style="margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge green" id="safetyBadge">안전</span>
+              <span style="font-size: 1.05rem; font-weight: 700;" id="safetyHeadline">화재 감지 및 안전 상태 진단 중</span>
             </div>
-            <span class="value" style="font-weight: 700; font-size: 1.1rem;"><span id="valTemp">24.5</span><span style="font-size:0.85rem; font-weight:500; color:var(--text-secondary); margin-left: 2px;">°C</span></span>
           </div>
 
           <div class="safety-status-row">
             <div class="safety-info-left">
-              <span class="title">대기질 및 연기 감지</span>
-              <span class="detail" id="lblSmokeDetail">유해 물질 없음 (안전)</span>
+              <span class="title">패드 온도</span>
+              <span class="detail" id="lblTempDetail">측정 온도 정상 범위</span>
             </div>
-            <span class="value" style="font-weight: 700; font-size: 1.1rem;"><span id="valSmoke">82</span><span style="font-size:0.85rem; font-weight:500; color:var(--text-secondary); margin-left: 2px;">ppm</span></span>
+            <span style="font-weight:700; font-size:1.1rem;"><span id="valTemp">24.5</span>°C</span>
           </div>
 
           <div class="safety-status-row">
             <div class="safety-info-left">
-              <span class="title">안전 전원 공급 장치</span>
-              <span class="detail" id="lblRelayDetail">전원 공급 차단 (대기 중)</span>
+              <span class="title">연기 농도</span>
+              <span class="detail" id="lblSmokeDetail">대기질 양호 및 연기 없음</span>
             </div>
-            <span id="valRelay" class="badge green">대기 (안전)</span>
+            <span style="font-weight:700; font-size:1.1rem;"><span id="valSmoke">82</span> <span style="font-size:0.85rem; color:var(--text-muted);">ppm</span></span>
+          </div>
+
+          <div class="safety-status-row">
+            <div class="safety-info-left">
+              <span class="title">전원 공급 상태</span>
+              <span class="detail" id="lblRelayDetail">전원 공급 대기 중</span>
+            </div>
+            <span class="badge green" id="valRelay">대기 (안전)</span>
           </div>
         </div>
 
         <!-- Card 1.4: NFC Authentication Log -->
-        <div class="toss-card">
-          <div class="toss-card-title">
-            <span>스마트 카드 인증 기록</span>
-            <span class="badge blue">실시간 수신</span>
+        <div class="toss-card" style="padding: 16px 20px;">
+          <div class="toss-card-title" style="margin-bottom: 8px; font-size: 0.95rem;">
+            NFC 인증 로그 (PN532)
           </div>
           <div class="nfc-logs-area" id="nfcLogsArea">
-            <div class="nfc-log-entry">[00:00:00] [시스템] 회원 카드를 충전기 NFC 단말기에 접촉해 주세요.</div>
+            <div class="nfc-log-entry auth-success">[시스템] NEO CHARGE 무선 충전 시뮬레이션 시작</div>
           </div>
         </div>
-
       </div>
-
 
       <!-- VIEW 2: MAP / CHARGING STATIONS -->
       <div class="page-view" id="viewMap">
-        
         <!-- Interactive Vector Map UI -->
         <div class="map-frame-container">
-          <svg class="map-svg" viewBox="0 0 400 240">
+          <svg class="map-svg" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
             <!-- Road map vectors -->
             <rect x="0" y="0" width="400" height="240" fill="#f4f3f0" />
+            
             <!-- Park space -->
-            <path d="M 0 0 L 120 0 L 120 100 L 0 100 Z" fill="#e2ebd5" />
-            <text x="35" y="55" fill="#8d9f78" font-size="11" font-weight="700">그린 파크</text>
+            <rect x="20" y="140" width="360" height="80" rx="8" fill="#e8eaed" />
+            <text x="200" y="185" text-anchor="middle" font-size="14" font-weight="700" fill="#9aa0a6" font-family="Pretendard">A동 주차장</text>
             
             <!-- Road grid -->
-            <path d="M 120 0 L 120 240 M 240 0 L 240 240 M 0 140 L 400 140 M 0 190 L 400 190" stroke="#ffffff" stroke-width="20" stroke-linecap="square" />
-            <path d="M 120 0 L 120 240 M 240 0 L 240 240 M 0 140 L 400 140 M 0 190 L 400 190" stroke="#e0decb" stroke-width="1.5" stroke-dasharray="6,4" />
-
+            <path d="M 0 60 L 400 60" stroke="#ffffff" stroke-width="8" />
+            <path d="M 200 0 L 200 240" stroke="#ffffff" stroke-width="8" />
+            <path d="M 80 60 L 80 140" stroke="#ffffff" stroke-width="6" />
+            <path d="M 320 60 L 320 140" stroke="#ffffff" stroke-width="6" />
+            
             <!-- User Location Pulsing Dot -->
-            <g transform="translate(180, 165)">
-              <circle cx="0" cy="0" r="14" fill="var(--toss-blue)" opacity="0.25">
-                <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite"/>
-                <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/>
-              </circle>
-              <circle cx="0" cy="0" r="5" fill="var(--toss-blue)" stroke="#ffffff" stroke-width="1.5" />
-            </g>
-
+            <circle cx="200" cy="180" r="6" fill="#3182f6">
+              <animate attributeName="r" values="6;12;6" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="200" cy="180" r="4" fill="#ffffff" />
+            
             <!-- Charging Spots Markers (Pins) -->
             <!-- Spot 1: A동 -->
-            <g id="mapPin1" transform="translate(80, 120)" class="map-pin" style="cursor:pointer;">
-              <path d="M 0 0 C -6 -6 -10 -12 -10 -18 C -10 -24 -5 -29 0 -29 C 5 -29 10 -24 10 -18 C 10 -12 6 -6 0 0 Z" fill="var(--toss-green)" />
-              <circle cx="0" cy="-18" r="4.5" fill="#ffffff" />
+            <g id="mapPin1" class="map-pin" style="cursor: pointer;">
+              <path d="M 100 120 C 100 110, 110 100, 120 100 C 130 100, 140 110, 140 120 C 140 135, 120 150, 120 150 C 120 150, 100 135, 100 120 Z" fill="#3182f6" />
+              <circle cx="120" cy="118" r="6" fill="#ffffff" />
             </g>
-
             <!-- Spot 2: B동 -->
-            <g id="mapPin2" transform="translate(280, 80)" class="map-pin" style="cursor:pointer;">
-              <path d="M 0 0 C -6 -6 -10 -12 -10 -18 C -10 -24 -5 -29 0 -29 C 5 -29 10 -24 10 -18 C 10 -12 6 -6 0 0 Z" fill="var(--toss-red)" />
-              <circle cx="0" cy="-18" r="4.5" fill="#ffffff" />
+            <g id="mapPin2" class="map-pin" style="cursor: pointer;">
+              <path d="M 280 120 C 280 110, 290 100, 300 100 C 310 100, 320 110, 320 120 C 320 135, 300 150, 300 150 C 300 150, 280 135, 280 120 Z" fill="#3182f6" />
+              <circle cx="300" cy="118" r="6" fill="#ffffff" />
             </g>
-
             <!-- Spot 3: C동 -->
-            <g id="mapPin3" transform="translate(200, 50)" class="map-pin" style="cursor:pointer;">
-              <path d="M 0 0 C -6 -6 -10 -12 -10 -18 C -10 -24 -5 -29 0 -29 C 5 -29 10 -24 10 -18 C 10 -12 6 -6 0 0 Z" fill="var(--toss-green)" />
-              <circle cx="0" cy="-18" r="4.5" fill="#ffffff" />
+            <g id="mapPin3" class="map-pin" style="cursor: pointer;">
+              <path d="M 190 40 C 190 30, 200 20, 210 20 C 220 20, 230 30, 230 40 C 230 55, 210 70, 210 70 C 210 70, 190 55, 190 40 Z" fill="#3182f6" />
+              <circle cx="210" cy="38" r="6" fill="#ffffff" />
             </g>
           </svg>
-        </div>
-
-        <div class="toss-card-title">
-          <span>가까운 무선 충전 구역</span>
         </div>
 
         <!-- Spot 1 Card -->
         <div class="map-spot-card selected" id="spotCard1">
           <div class="map-spot-info">
-            <span class="name">무선 충전 1호기 (A동 지하2층)</span>
-            <span class="location">서울시 마포구 백범로 35 • 140m • 200원/kWh</span>
+            <span class="name">무선 충전 1호기</span>
+            <span class="location">A동 지하주차장 B3 구역</span>
           </div>
-          <span class="badge green">이용 가능</span>
+          <span class="badge blue">사용 가능</span>
         </div>
 
         <!-- Spot 2 Card -->
         <div class="map-spot-card" id="spotCard2">
           <div class="map-spot-info">
-            <span class="name">무선 충전 2호기 (B동 지상1층)</span>
-            <span class="location">서울시 마포구 백범로 35 • 320m • 220원/kWh</span>
+            <span class="name">무선 충전 2호기</span>
+            <span class="location">B동 지하주차장 B2 구역</span>
           </div>
-          <span class="badge red">사용 중</span>
+          <span class="badge green">충전 중</span>
         </div>
 
         <!-- Spot 3 Card -->
         <div class="map-spot-card" id="spotCard3">
           <div class="map-spot-info">
-            <span class="name">무선 충전 3호기 (C동 지하1층)</span>
-            <span class="location">서울시 마포구 백범로 35 • 450m • 200원/kWh</span>
+            <span class="name">무선 충전 3호기</span>
+            <span class="location">C동 야외 주차장 EV Zone</span>
           </div>
-          <span class="badge green">이용 가능</span>
+          <span class="badge blue">사용 가능</span>
         </div>
-
       </div>
-
 
       <!-- VIEW 3: CHARGING HISTORY -->
       <div class="page-view" id="viewHistory">
-        
         <!-- Summary Stats Card -->
         <div class="toss-card">
-          <p style="font-size:0.85rem; font-weight:600; color:var(--text-secondary); margin-bottom: 2px;">5월 충전 리포트</p>
-          <h2 style="font-size:1.6rem; font-weight:800; line-height:1.2; margin-bottom: 6px;">총 84.5 kWh 충전했어요</h2>
-          <p style="font-size:0.85rem; color:var(--toss-blue); font-weight:700; margin-bottom: 12px;">일반 유선 충전 대비 약 16,900원 절약</p>
-          
-          <!-- Simple Weekly Chart -->
-          <div class="chart-container">
-            <div class="chart-bar-wrapper">
-              <div class="chart-bar-track"><div class="chart-bar-fill" style="height: 40%"></div></div>
-              <span class="chart-label">1주차</span>
+          <div class="toss-card-title">이번 달 요약</div>
+          <div class="metric-grid">
+            <div class="metric-item">
+              <span class="label">총 충전 횟수</span>
+              <span class="value">12<span class="unit">회</span></span>
             </div>
-            <div class="chart-bar-wrapper">
-              <div class="chart-bar-track"><div class="chart-bar-fill" style="height: 65%"></div></div>
-              <span class="chart-label">2주차</span>
+            <div class="metric-item">
+              <span class="label">총 사용 전력</span>
+              <span class="value">186<span class="unit">kWh</span></span>
             </div>
-            <div class="chart-bar-wrapper active">
-              <div class="chart-bar-track"><div class="chart-bar-fill" style="height: 85%"></div></div>
-              <span class="chart-label">3주차</span>
+            <div class="metric-item">
+              <span class="label">총 주행 거리</span>
+              <span class="value">1,048<span class="unit">km</span></span>
             </div>
-            <div class="chart-bar-wrapper">
-              <div class="chart-bar-track"><div class="chart-bar-fill" style="height: 50%"></div></div>
-              <span class="chart-label">4주차</span>
+            <div class="metric-item">
+              <span class="label">평균 충전량</span>
+              <span class="value">15.5<span class="unit">kWh</span></span>
             </div>
           </div>
         </div>
 
-        <div class="toss-card-title" style="margin-left: 8px;">
-          <span>상세 이력</span>
+        <!-- Simple Weekly Chart -->
+        <div class="toss-card">
+          <div class="toss-card-title" style="margin-bottom: 8px;">주간 충전량 (kWh)</div>
+          <div class="chart-container">
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 40%;"></div>
+              </div>
+              <span class="chart-label">월</span>
+            </div>
+            <div class="chart-bar-wrapper active">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 75%;"></div>
+              </div>
+              <span class="chart-label">화</span>
+            </div>
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 55%;"></div>
+              </div>
+              <span class="chart-label">수</span>
+            </div>
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 30%;"></div>
+              </div>
+              <span class="chart-label">목</span>
+            </div>
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 65%;"></div>
+              </div>
+              <span class="chart-label">금</span>
+            </div>
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 90%;"></div>
+              </div>
+              <span class="chart-label">토</span>
+            </div>
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="height: 20%;"></div>
+              </div>
+              <span class="chart-label">일</span>
+            </div>
+          </div>
         </div>
 
         <!-- History Lists -->
-        <div class="toss-card" style="padding: 24px 20px;">
+        <div class="toss-card" style="padding: 16px 20px;">
+          <div class="toss-card-title" style="font-size: 0.95rem; margin-bottom: 12px;">최근 충전 이력</div>
           <div class="history-list-group">
-            
             <div class="history-item">
               <div class="history-item-left">
-                <span class="title">무선 충전 1호기 (A동)</span>
-                <span class="date">어제 14:24 • 무선 자동 충전 완료</span>
+                <span class="title">무선 충전 1호기</span>
+                <span class="date">2024. 05. 24 오후 3:42</span>
               </div>
               <div class="history-item-right">
-                <span class="val">14.2 kWh</span>
-                <span class="cost">2,840원</span>
+                <span class="val">18.2 kWh</span>
+                <span class="cost">₩4,832</span>
               </div>
             </div>
-
             <div class="history-item">
               <div class="history-item-left">
-                <span class="title">무선 충전 1호기 (A동)</span>
-                <span class="date">5월 24일 09:12 • 무선 자동 충전 완료</span>
+                <span class="title">무선 충전 2호기</span>
+                <span class="date">2024. 05. 22 오전 9:15</span>
               </div>
               <div class="history-item-right">
-                <span class="val">22.8 kWh</span>
-                <span class="cost">4,560원</span>
+                <span class="val">22.5 kWh</span>
+                <span class="cost">₩5,970</span>
               </div>
             </div>
-
             <div class="history-item">
               <div class="history-item-left">
-                <span class="title">무선 충전 3호기 (C동)</span>
-                <span class="date">5월 20일 18:40 • 무선 자동 충전 완료</span>
+                <span class="title">무선 충전 1호기</span>
+                <span class="date">2024. 05. 20 오후 6:30</span>
               </div>
               <div class="history-item-right">
-                <span class="val">18.5 kWh</span>
-                <span class="cost">3,700원</span>
+                <span class="val">12.8 kWh</span>
+                <span class="cost">₩3,398</span>
               </div>
             </div>
-
-            <div class="history-item" style="border:none; padding-bottom: 0;">
+            <div class="history-item">
               <div class="history-item-left">
-                <span class="title">무선 충전 1호기 (A동)</span>
-                <span class="date">5월 15일 11:32 • 무선 자동 충전 완료</span>
+                <span class="title">무선 충전 3호기</span>
+                <span class="date">2024. 05. 18 오후 1:10</span>
               </div>
               <div class="history-item-right">
-                <span class="val">29.0 kWh</span>
-                <span class="cost">5,800원</span>
+                <span class="val">25.0 kWh</span>
+                <span class="cost">₩6,635</span>
               </div>
             </div>
-
+            <div class="history-item">
+              <div class="history-item-left">
+                <span class="title">무선 충전 1호기</span>
+                <span class="date">2024. 05. 15 오전 11:00</span>
+              </div>
+              <div class="history-item-right">
+                <span class="val">16.5 kWh</span>
+                <span class="cost">₩4,378</span>
+              </div>
+            </div>
           </div>
         </div>
-
       </div>
-
 
       <!-- VIEW 4: SETTINGS -->
       <div class="page-view" id="viewSettings">
-        
         <!-- Profile info -->
-        <div class="toss-card">
+        <div class="toss-card" style="padding: 16px 20px;">
           <div class="profile-card">
-            <div class="profile-avatar">게스트</div>
+            <div class="profile-avatar">게</div>
             <div class="profile-info">
               <span class="name">게스트</span>
-              <span class="role">guest@neocharge.kr</span>
+              <span class="role">일반 사용자</span>
             </div>
           </div>
         </div>
 
         <!-- Settings Groups -->
-        <div class="toss-card" style="padding: 8px 24px;">
+        <div class="toss-card" style="padding: 8px 0;">
           <div class="settings-list-group">
-            
             <div class="settings-row" id="rowManageNfc">
               <div class="settings-row-left">
-                <span class="title">NFC 스마트 카드 관리</span>
-                <span class="detail">인증용으로 등록된 스마트 카드 정보</span>
+                <span class="title">NFC 스마트 카드</span>
+                <span class="detail">등록된 카드 관리 및 UID 확인</span>
               </div>
-              <span class="settings-row-value">
-                UID: 4A 8B C3 F2
+              <div class="settings-row-value">
+                미등록
                 <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-              </span>
+              </div>
             </div>
-
             <div class="settings-row">
               <div class="settings-row-left">
-                <span class="title">정위치 주차 가이드 시스템</span>
-                <span class="detail">주차 시 충전기 위치 정밀 유도 기능 활성화</span>
+                <span class="title">충전 알림 설정</span>
+                <span class="detail">충전 완료 및 안전 경보 알림</span>
               </div>
               <label class="ios-switch">
-                <input type="checkbox" checked role="switch" aria-label="정위치 주차 가이드 시스템">
+                <input type="checkbox" checked role="switch" aria-label="충전 알림 설정">
                 <span class="ios-slider"></span>
               </label>
             </div>
-
             <div class="settings-row">
               <div class="settings-row-left">
-                <span class="title">소방 경보 실시간 문자 수신</span>
-                <span class="detail">화재 발생 시 비상 연락망 자동 전송</span>
+                <span class="title">데이터 동기화</span>
+                <span class="detail">충전 이력을 클라우드에 백업</span>
               </div>
               <label class="ios-switch">
-                <input type="checkbox" id="chkSettingsFireSms" checked role="switch" aria-label="소방 경보 실시간 문자 수신">
+                <input type="checkbox" role="switch" aria-label="데이터 동기화">
                 <span class="ios-slider"></span>
               </label>
             </div>
+          </div>
+        </div>
 
-            <div class="settings-row" style="border:none;">
+        <div class="toss-card" style="padding: 8px 0;">
+          <div class="settings-list-group">
+            <div class="settings-row">
               <div class="settings-row-left">
-                <span class="title">비상 알림 연락처</span>
-                <span class="detail">소방 경고 발생 시 알림을 수신할 번호</span>
+                <span class="title">단위 설정</span>
+                <span class="detail">km / miles, kWh / kW</span>
               </div>
-              <span class="settings-row-value">
-                010-XXXX-3820
+              <div class="settings-row-value">
+                km, kWh
                 <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-              </span>
+              </div>
             </div>
-
+            <div class="settings-row">
+              <div class="settings-row-left">
+                <span class="title">테마 설정</span>
+                <span class="detail">라이트 / 다크 모드</span>
+              </div>
+              <div class="settings-row-value">
+                라이트
+                <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- App Information Group -->
-        <div class="toss-card" style="padding: 16px 24px; margin-bottom: 24px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; padding: 12px 0; border-bottom:1px solid #f2f4f6;">
-            <span style="font-weight:600; color:var(--text-primary);">서비스 버전</span>
-            <span style="color:var(--text-muted); font-weight:500;">v1.4.2 (최신 버전)</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; padding: 12px 0; border-bottom:1px solid #f2f4f6; cursor:pointer;">
-            <span style="font-weight:600; color:var(--text-primary);">오픈소스 라이선스</span>
-            <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; padding: 12px 0; cursor:pointer;">
-            <span style="font-weight:600; color:var(--text-primary);">고객센터 및 서비스 문의</span>
-            <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+        <div class="toss-card" style="padding: 16px 20px;">
+          <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">NEO CHARGE</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">버전 1.0.0 (Build 20240524)</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">ⓒ 2024 NEO Charge Team</span>
           </div>
         </div>
-
       </div>
-
     </div> <!-- Page Views Wrapper End -->
 
     <!-- Administrator Demo Settings Console (Globally overlayable above bottom navigation) -->
@@ -1804,6 +641,11 @@
           비상 경보 해제 및 초기화
         </button>
 
+        <!-- Retry Charging Button -->
+        <button class="toss-btn" id="btnSimRetryCharge" style="height: 48px; border-radius: 12px; font-size: 0.9rem; background: var(--toss-blue); color: #ffffff; box-shadow: 0 4px 12px rgba(49, 130, 246, 0.15); display: none;">
+          충전 다시하기
+        </button>
+
       </div>
     </div> <!-- Drawer End -->
 
@@ -1836,851 +678,12 @@
       <button class="nav-tab-btn" data-tab="Settings" role="tab" aria-selected="false" aria-label="Settings Tab">
         <!-- Settings Gear SVG -->
         <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0-.44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0-.59-.22l-1.92-3.32c-.12-.22-.07-.47.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
         </svg>
         <span>설정</span>
       </button>
     </nav>
 
   </div> <!-- Phone Container End -->
-
-  <!-- JavaScript Interaction Logic -->
-  <script>
-    // Audio engine using Web Audio API
-    class PremiumAudioEngine {
-      constructor() {
-        this.ctx = null;
-        this.enabled = false;
-        this.alarmInterval = null;
-      }
-
-      init() {
-        if (!this.ctx) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
-      }
-
-      toggle(forceState) {
-        this.enabled = forceState !== undefined ? forceState : !this.enabled;
-        if (this.enabled) {
-          this.init();
-        }
-        return this.enabled;
-      }
-
-      playClick() {
-        if (!this.enabled || !this.ctx) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(850, now);
-        gain.gain.setValueAtTime(0.015, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
-        osc.start(now);
-        osc.stop(now + 0.04);
-      }
-
-      playNfcChime() {
-        if (!this.enabled || !this.ctx) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        
-        const osc1 = this.ctx.createOscillator();
-        const gain1 = this.ctx.createGain();
-        osc1.connect(gain1);
-        gain1.connect(this.ctx.destination);
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(523.25, now);
-        gain1.gain.setValueAtTime(0.04, now);
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-        osc1.start(now);
-        osc1.stop(now + 0.2);
-        
-        const osc2 = this.ctx.createOscillator();
-        const gain2 = this.ctx.createGain();
-        osc2.connect(gain2);
-        gain2.connect(this.ctx.destination);
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(659.25, now + 0.08);
-        gain2.gain.setValueAtTime(0.04, now + 0.08);
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-        osc2.start(now + 0.08);
-        osc2.stop(now + 0.3);
-      }
-
-      startBuzzerAlarm() {
-        if (!this.enabled || !this.ctx || this.alarmInterval) return;
-        this.init();
-        
-        const playTone = () => {
-          if (!this.enabled || !this.ctx) return;
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(800, now);
-          osc.frequency.linearRampToValueAtTime(400, now + 0.35);
-          
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
-          osc.start(now);
-          osc.stop(now + 0.4);
-        };
-        
-        playTone();
-        this.alarmInterval = setInterval(playTone, 600);
-      }
-
-      stopBuzzerAlarm() {
-        if (this.alarmInterval) {
-          clearInterval(this.alarmInterval);
-          this.alarmInterval = null;
-        }
-      }
-    }
-
-    const sound = new PremiumAudioEngine();
-
-    // DOM References
-    const statusBarTime = document.getElementById('statusBarTime');
-    const statusBatteryFill = document.getElementById('statusBatteryFill');
-    const headerWelcome = document.getElementById('headerWelcome');
-    const bearRow = document.getElementById('bearRow');
-    const btnMuteToggle = document.getElementById('btnMuteToggle');
-    const muteIcon = document.getElementById('muteIcon');
-    const hudNotice = document.getElementById('hudNotice');
-    const hudNoticeText = document.getElementById('hudNoticeText');
-    const dlgEmergency = document.getElementById('dlgEmergency');
-    const btnEmergencyReset = document.getElementById('btnEmergencyReset');
-    const dlgAlignWarning = document.getElementById('dlgAlignWarning');
-    const btnAlignWarningClose = document.getElementById('btnAlignWarningClose');
-    const dlgPlateInput = document.getElementById('dlgPlateInput');
-    const btnEditPlate = document.getElementById('btnEditPlate');
-    const btnPlateInputCancel = document.getElementById('btnPlateInputCancel');
-    const btnPlateInputSave = document.getElementById('btnPlateInputSave');
-    const iptCarPlate = document.getElementById('iptCarPlate');
-    const lblRegisteredPlate = document.getElementById('lblRegisteredPlate');
-    
-    // Tab switching controls
-    const tabButtons = document.querySelectorAll('.nav-tab-btn');
-    const pageViews = document.querySelectorAll('.page-view');
-    let tabSwitchTimeout = null;
-
-    // Home Page DOM elements
-    const cybertruckImg = document.getElementById('cybertruckImg');
-    const carStatusBadge = document.getElementById('carStatusBadge');
-    const carStatusSubText = document.getElementById('carStatusSubText');
-    const alignmentDot = document.getElementById('alignmentDot');
-    const alignmentText = document.getElementById('alignmentText');
-    
-    const cardCharge = document.getElementById('cardCharge');
-    const chargeBadge = document.getElementById('chargeBadge');
-    const chargeHeadline = document.getElementById('chargeHeadline');
-    const chargeProgressTrack = document.getElementById('chargeProgressTrack');
-    const chargeProgressBar = document.getElementById('chargeProgressBar');
-    const btnAction = document.getElementById('btnAction');
-    
-    const valBattery = document.getElementById('valBattery');
-    const valRange = document.getElementById('valRange');
-    const valPower = document.getElementById('valPower');
-    const valTime = document.getElementById('valTime');
-    
-    const cardSafety = document.getElementById('cardSafety');
-    const safetyBadge = document.getElementById('safetyBadge');
-    const safetyHeadline = document.getElementById('safetyHeadline');
-    const valTemp = document.getElementById('valTemp');
-    const valSmoke = document.getElementById('valSmoke');
-    const valRelay = document.getElementById('valRelay');
-    const lblTempDetail = document.getElementById('lblTempDetail');
-    const lblSmokeDetail = document.getElementById('lblSmokeDetail');
-    const lblRelayDetail = document.getElementById('lblRelayDetail');
-    const nfcLogsArea = document.getElementById('nfcLogsArea');
-    
-    // Map Page DOM elements
-    const mapPins = document.querySelectorAll('.map-pin');
-    const mapCards = document.querySelectorAll('.map-spot-card');
-
-    // Simulator Drawer DOM elements
-    const simDrawer = document.getElementById('simDrawer');
-    const simHeader = document.getElementById('simHeader');
-    const btnSimNfc = document.getElementById('btnSimNfc');
-    const chkSimAlign = document.getElementById('chkSimAlign');
-    const rngSimTemp = document.getElementById('rngSimTemp');
-    const rngSimSmoke = document.getElementById('rngSimSmoke');
-    const lblSimTemp = document.getElementById('lblSimTemp');
-    const lblSimSmoke = document.getElementById('lblSimSmoke');
-    const btnSimResetAlert = document.getElementById('btnSimResetAlert');
-
-    // States
-    let isMuted = true;
-    let isAligned = true;
-    let batteryLevel = 76;
-    let currentRange = 428;
-    let chargingState = 'standby'; // 'standby', 'ready_to_charge', 'charging', 'alarm'
-    let isNfcScanned = false;
-    let temperatureVal = 24.5;
-    let smokeVal = 82;
-    let chargingTimer = null;
-    let chargeStartTimeout = null;
-    let chargeCyclePower = 0.0;
-    
-    // Live clock updating
-    function updateClock() {
-      const now = new Date();
-      let hrs = String(now.getHours()).padStart(2, '0');
-      let mins = String(now.getMinutes()).padStart(2, '0');
-      statusBarTime.textContent = `${hrs}:${mins}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // Show temporary notice hud
-    function showNotice(msg) {
-      hudNoticeText.textContent = msg;
-      hudNotice.classList.add('visible');
-      setTimeout(() => hudNotice.classList.remove('visible'), 1600);
-    }
-
-    // Toggle mute
-    btnMuteToggle.addEventListener('click', () => {
-      isMuted = !isMuted;
-      const isEnabled = sound.toggle(!isMuted);
-      
-      if (isEnabled) {
-        muteIcon.innerHTML = `
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
-        `;
-        btnMuteToggle.style.color = 'var(--toss-blue)';
-        btnMuteToggle.style.backgroundColor = 'var(--toss-blue-light)';
-        sound.playClick();
-        showNotice("사운드 활성화");
-      } else {
-        muteIcon.innerHTML = `
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
-        `;
-        btnMuteToggle.style.color = 'var(--text-secondary)';
-        btnMuteToggle.style.backgroundColor = '#ffffff';
-        showNotice("사운드 음소거");
-      }
-    });
-
-    // Tab Switching Mechanism with Native Animations
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const targetTabName = btn.getAttribute('data-tab');
-        const activeTabBtn = document.querySelector('.nav-tab-btn.active');
-        const activeView = document.querySelector('.page-view.active');
-        const targetView = document.getElementById(`view${targetTabName}`);
-        
-        if (btn === activeTabBtn) return;
-        
-        sound.playClick();
-        
-        // Update tab buttons
-        activeTabBtn.classList.remove('active');
-        activeTabBtn.setAttribute('aria-selected', 'false');
-        btn.classList.add('active');
-        btn.setAttribute('aria-selected', 'true');
-        
-        // Dynamic title update depending on pages
-        if (targetTabName === 'Home') {
-          headerWelcome.innerHTML = chargingState === 'alarm' ? '<span style="color:var(--toss-red);">위험 감지</span> 충전 차단됨' : `안녕하세요, 게스트님`;
-        } else if (targetTabName === 'Map') {
-          headerWelcome.innerHTML = `근처의 무선 충전소`;
-        } else if (targetTabName === 'History') {
-          headerWelcome.innerHTML = `나의 충전 이력`;
-        } else if (targetTabName === 'Settings') {
-          headerWelcome.innerHTML = `서비스 설정`;
-        }
-
-        // Show bears only on Home page
-        if (bearRow) {
-          if (targetTabName === 'Home') {
-            bearRow.style.display = 'flex';
-          } else {
-            bearRow.style.display = 'none';
-          }
-        }
-        
-        // Smooth transition trigger
-        if (tabSwitchTimeout) clearTimeout(tabSwitchTimeout);
-        activeView.classList.remove('show');
-
-        tabSwitchTimeout = setTimeout(() => {
-          activeView.classList.remove('active');
-          targetView.classList.add('active');
-
-          // Force reflow so the transition from display:none to display:block is registered
-          targetView.offsetWidth;
-
-          targetView.classList.add('show');
-          tabSwitchTimeout = null;
-        }, 200);
-      });
-    });
-
-    // Toggle simulation settings widget drawer
-    simHeader.addEventListener('click', () => {
-      sound.playClick();
-      const isCollapsed = simDrawer.classList.toggle('collapsed');
-      simHeader.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
-    });
-
-    const MAX_LOG_ENTRIES = 100;
-
-    // Logging helper inside PN532 console display
-    function logNfc(message, isSuccess = false) {
-      const now = new Date();
-      const hrs = String(now.getHours()).padStart(2, '0');
-      const mins = String(now.getMinutes()).padStart(2, '0');
-      const secs = String(now.getSeconds()).padStart(2, '0');
-      const timestamp = `[${hrs}:${mins}:${secs}]`;
-
-      const entry = document.createElement('div');
-      entry.className = 'nfc-log-entry' + (isSuccess ? ' auth-success' : '');
-      entry.textContent = `${timestamp} ${message}`;
-
-      nfcLogsArea.appendChild(entry);
-
-      while (nfcLogsArea.children.length > MAX_LOG_ENTRIES) {
-        nfcLogsArea.removeChild(nfcLogsArea.firstChild);
-      }
-
-      nfcLogsArea.scrollTop = nfcLogsArea.scrollHeight;
-    }
-
-    // NFC Card tag simulation triggers
-    btnSimNfc.addEventListener('click', () => {
-      sound.playClick();
-      
-      if (chargingState === 'alarm') {
-        showNotice("경보 상태: 카드 등록 불가");
-        return;
-      }
-      
-      // Random mock card hex UID
-      const uids = ["4A 8B C3 F2", "D1 82 9A 40", "04 7F A3 B2"];
-      const randomUid = uids[Math.floor(Math.random() * uids.length)];
-      
-      sound.playNfcChime();
-      isNfcScanned = true;
-      
-      logNfc(`[NFC] 스마트 카드 인식 감지 (UID: ${randomUid})`);
-      logNfc(`[인증 결과] 사용자 스마트 카드 인증 성공 - 충전 대기`, true);
-      
-      showNotice("NFC 카드 인증 완료");
-      
-      // Update Settings Page Card value
-      document.getElementById('rowManageNfc').querySelector('.settings-row-value').innerHTML = `
-        UID: ${randomUid}
-        <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-        </svg>
-      `;
-      
-      // Pivot charging state
-      if (chargingState === 'standby' || chargingState === 'ready_to_charge') {
-        if (isAligned) {
-          setChargingState('ready_to_charge');
-          if (chargeStartTimeout) clearTimeout(chargeStartTimeout);
-          chargeStartTimeout = setTimeout(() => {
-            chargeStartTimeout = null;
-            startChargingSession();
-          }, 600);
-        } else {
-          logNfc("[인증 보류] 주차 정위치 오류: 차량 주차 위치를 맞춰주세요.");
-          document.querySelector('.phone-container').classList.add('align-warning-active');
-          dlgAlignWarning.show();
-        }
-      }
-    });
-
-    // Coil Proximity Switch toggling
-    function onAlignmentChanged(aligned) {
-      isAligned = aligned;
-
-      if (chargingState === 'alarm') return;
-
-      if (isAligned) {
-        alignmentDot.className = 'alignment-dot aligned';
-        alignmentText.textContent = '정위치 주차 완료';
-        carStatusBadge.className = 'badge blue';
-        carStatusBadge.textContent = '대기 중';
-        carStatusSubText.textContent = '무선 충전 주차 구역에 올바르게 주차되어 있어요';
-
-        document.querySelector('.phone-container').classList.remove('align-warning-active');
-        if (dlgAlignWarning.open) {
-          dlgAlignWarning.close();
-        }
-
-        if (isNfcScanned) {
-          setChargingState('ready_to_charge');
-        } else {
-          chargeBadge.className = 'badge blue';
-          chargeBadge.textContent = '인증 필요';
-          chargeHeadline.textContent = '무선 충전을 위해 회원 카드를 NFC 인식기에 접촉해 주세요.';
-        }
-      } else {
-        alignmentDot.className = 'alignment-dot';
-        alignmentText.textContent = '주차 위치 이탈 (대기)';
-        carStatusBadge.className = 'badge amber';
-        carStatusBadge.textContent = '위치 이탈';
-        carStatusSubText.textContent = '충전 구역 내 올바른 위치에 차량을 주차해 주세요';
-
-        // Stop charging if alignment is lost
-        if (chargingState === 'charging') {
-          stopChargingSession('misaligned');
-        } else {
-          setChargingState('standby');
-        }
-      }
-    }
-
-    chkSimAlign.addEventListener('change', (e) => {
-      sound.playClick();
-      onAlignmentChanged(e.target.checked);
-    });
-
-    btnAlignWarningClose.addEventListener('click', () => {
-      sound.playClick();
-      document.querySelector('.phone-container').classList.remove('align-warning-active');
-      if (dlgAlignWarning.open) {
-        dlgAlignWarning.close();
-      }
-    });
-
-    // Toggle expand/collapse for the 'My Car' card and support swipe gesture
-    let carTouchStartY = 0;
-    let carTouchEndY = 0;
-    const carCard = document.querySelector('.car-card');
-
-    carCard.addEventListener('touchstart', (e) => {
-      if (e.target.closest('#btnEditPlate')) return;
-      carTouchStartY = e.touches[0].clientY;
-      carTouchEndY = carTouchStartY;
-    }, { passive: true });
-
-    carCard.addEventListener('touchmove', (e) => {
-      if (e.target.closest('#btnEditPlate')) return;
-      carTouchEndY = e.touches[0].clientY;
-    }, { passive: true });
-
-    carCard.addEventListener('touchend', (e) => {
-      if (e.target.closest('#btnEditPlate')) return;
-      const swipeDistance = carTouchEndY - carTouchStartY;
-      
-      if (swipeDistance > 30) { // Swipe Down
-        if (!carCard.classList.contains('expanded')) {
-          carCard.classList.add('expanded');
-          sound.playClick();
-        }
-      } else if (swipeDistance < -30) { // Swipe Up
-        if (carCard.classList.contains('expanded')) {
-          carCard.classList.remove('expanded');
-          sound.playClick();
-        }
-      }
-    });
-
-    carCard.addEventListener('click', (e) => {
-      // Exclude '변경' button so it doesn't toggle accordion
-      if (e.target.closest('#btnEditPlate')) return;
-      
-      // If it was a touch movement, ignore click to avoid double-firing or conflicting with swipe
-      const touchDiff = Math.abs(carTouchEndY - carTouchStartY);
-      if (touchDiff > 10) return;
-      
-      carCard.classList.toggle('expanded');
-      sound.playClick();
-    });
-
-    // License Plate Modal triggers
-    btnEditPlate.addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevent triggering car-card click event
-      sound.playClick();
-      document.querySelector('.phone-container').classList.add('plate-input-active');
-      dlgPlateInput.show();
-    });
-
-    btnPlateInputCancel.addEventListener('click', () => {
-      sound.playClick();
-      document.querySelector('.phone-container').classList.remove('plate-input-active');
-      dlgPlateInput.close();
-    });
-
-    btnPlateInputSave.addEventListener('click', () => {
-      sound.playClick();
-      const newPlate = iptCarPlate.value.trim().toUpperCase();
-      if (newPlate) {
-        lblRegisteredPlate.textContent = newPlate;
-        logNfc(`[차량 등록] 차량 번호판이 '${newPlate}'로 업데이트되었습니다.`);
-        showNotice("차량 번호 변경 완료");
-      }
-      document.querySelector('.phone-container').classList.remove('plate-input-active');
-      dlgPlateInput.close();
-    });
-
-    // Sliding controllers for Temperature
-    rngSimTemp.addEventListener('input', (e) => {
-      temperatureVal = parseFloat(e.target.value);
-      lblSimTemp.textContent = `${temperatureVal.toFixed(1)}°C`;
-      valTemp.textContent = temperatureVal.toFixed(1);
-      checkSafetyThresholds();
-    });
-
-    // Sliding controllers for Smoke
-    rngSimSmoke.addEventListener('input', (e) => {
-      smokeVal = parseInt(e.target.value);
-      lblSimSmoke.textContent = `${smokeVal} ppm`;
-      valSmoke.textContent = smokeVal;
-      checkSafetyThresholds();
-    });
-
-    // Main Charging State Engine
-    function setChargingState(state) {
-      if (chargingState === 'alarm' && state !== 'standby') return;
-      
-      chargingState = state;
-      
-      if (state === 'standby') {
-        chargeBadge.className = 'badge amber';
-        chargeBadge.textContent = '대기 중';
-        chargeHeadline.textContent = '올바른 주차 위치 확인 및 NFC 인증을 대기하고 있습니다.';
-        btnAction.className = 'toss-btn disabled';
-        btnAction.textContent = 'NFC 인증 완료 시 충전 가능';
-        chargeProgressTrack.style.display = 'none';
-
-        valPower.textContent = '0.0';
-        valTime.textContent = '--';
-
-        valRelay.className = 'badge green';
-        valRelay.textContent = '대기 (안전)';
-        lblRelayDetail.textContent = '전원 공급 대기 중';
-        
-        cybertruckImg.style.filter = 'drop-shadow(0 8px 16px rgba(0,0,0,0.12))';
-      } else if (state === 'ready_to_charge') {
-        chargeBadge.className = 'badge blue';
-        chargeBadge.textContent = '충전 준비 완료';
-        chargeHeadline.textContent = '무선 연결에 성공했습니다. 충전을 시작할 수 있습니다.';
-        btnAction.className = 'toss-btn';
-        btnAction.textContent = '무선 충전 시작하기';
-        chargeProgressTrack.style.display = 'none';
-      } else if (state === 'charging') {
-        chargeBadge.className = 'badge green';
-        chargeBadge.textContent = '충전 중';
-        chargeHeadline.textContent = '차량에 전력을 안전하게 공급하고 있습니다.';
-        btnAction.className = 'toss-btn danger';
-        btnAction.textContent = '충전 중단하기';
-        chargeProgressTrack.style.display = 'block';
-        
-        valRelay.className = 'badge blue';
-        valRelay.textContent = '공급 중';
-        lblRelayDetail.textContent = '전원 공급 중: 무선 전송 중';
-        
-        cybertruckImg.style.filter = 'drop-shadow(0 8px 24px rgba(49, 130, 246, 0.25))';
-      }
-    }
-
-    // Toggle button event click
-    btnAction.addEventListener('click', () => {
-      sound.playClick();
-      if (chargingState === 'ready_to_charge') {
-        startChargingSession();
-      } else if (chargingState === 'charging') {
-        stopChargingSession('user');
-      } else if (chargingState === 'standby') {
-        if (!isAligned) {
-          document.querySelector('.phone-container').classList.add('align-warning-active');
-          dlgAlignWarning.show();
-        } else {
-          showNotice("NFC 카드를 먼저 태그해 주세요");
-        }
-      }
-    });
-
-    function startChargingSession() {
-      if (chargingState !== 'ready_to_charge') return;
-
-      if (chargeStartTimeout) {
-        clearTimeout(chargeStartTimeout);
-        chargeStartTimeout = null;
-      }
-
-      setChargingState('charging');
-      logNfc('[충전 개시] 안전 전원 공급 장치 활성화 완료');
-      logNfc('[충전소] 무선 충전 전원 전송 시작');
-
-      if (chargingTimer) clearInterval(chargingTimer);
-      
-      chargeCyclePower = 7.2;
-      valPower.textContent = chargeCyclePower.toFixed(1);
-
-      chargingTimer = setInterval(() => {
-        if (batteryLevel >= 100) {
-          batteryLevel = 100;
-          stopChargingSession('completed');
-          return;
-        }
-
-        batteryLevel += 1;
-        currentRange = Math.floor(batteryLevel * 5.63);
-
-        valBattery.textContent = batteryLevel;
-        valRange.textContent = currentRange;
-        statusBatteryFill.style.width = `${batteryLevel}%`;
-
-        chargeProgressBar.style.width = `${batteryLevel}%`;
-
-        const minsLeft = Math.ceil((100 - batteryLevel) * 0.8);
-        valTime.textContent = `${minsLeft}분 남음`;
-
-      }, 1000);
-    }
-
-    function stopChargingSession(reason = 'user') {
-      if (chargingState !== 'charging') return;
-      
-      if (chargingTimer) clearInterval(chargingTimer);
-      
-      if (reason === 'user') {
-        setChargingState('ready_to_charge');
-        logNfc('[충전 중단] 사용자 취소 요청으로 수동 정지');
-      } else if (reason === 'misaligned') {
-        setChargingState('standby');
-        logNfc('[충전 중단] 주차 위치 이탈 감지로 인한 자동 안전 차단');
-      } else if (reason === 'completed') {
-        setChargingState('ready_to_charge');
-        logNfc('[충전 완료] 배터리 충전 100% 도달로 인한 자동 종료');
-        showNotice("충전 완료");
-      }
-    }
-
-    // Safety rules trigger checking
-    function checkSafetyThresholds() {
-      // Alarm thresholds: Temp > 45C OR Smoke > 300 ppm
-      const isTempCritical = temperatureVal >= 45.0;
-      const isSmokeCritical = smokeVal >= 300;
-      
-      if (chargingState === 'alarm') {
-        if (dlgEmergency.open) {
-          updateEmergencyModal(isTempCritical, isSmokeCritical);
-        }
-        return;
-      }
-
-      if (isTempCritical || isSmokeCritical) {
-        triggerEmergencyState(isTempCritical, isSmokeCritical);
-      } else {
-        safetyBadge.className = 'badge green';
-        safetyBadge.textContent = '안전';
-        safetyHeadline.textContent = '화재 감지 및 안전 상태 진단 중';
-        cardSafety.style.backgroundColor = 'var(--bg-card)';
-        
-        lblTempDetail.textContent = '측정 온도 정상 범위';
-        lblSmokeDetail.textContent = '대기질 양호 및 연기 없음';
-        
-        if (chargingState !== 'charging') {
-          valRelay.className = 'badge green';
-          valRelay.textContent = '대기 (안전)';
-          lblRelayDetail.textContent = '전원 공급 대기 중';
-        }
-      }
-    }
-
-    function updateEmergencyModal(tempAlert, smokeAlert) {
-      const tempRow = document.getElementById('dlgEmergencyTempRow');
-      const smokeRow = document.getElementById('dlgEmergencySmokeRow');
-      const tempValEl = document.getElementById('dlgEmergencyTempVal');
-      const smokeValEl = document.getElementById('dlgEmergencySmokeVal');
-      
-      tempValEl.textContent = `${temperatureVal.toFixed(1)}°C`;
-      smokeValEl.textContent = `${smokeVal} ppm`;
-
-      if (tempAlert) {
-        tempRow.style.backgroundColor = 'var(--toss-red-light)';
-        tempRow.style.color = 'var(--toss-red)';
-        tempValEl.style.color = 'var(--toss-red)';
-      } else {
-        tempRow.style.backgroundColor = '#f9fafb';
-        tempRow.style.color = 'var(--text-primary)';
-        tempValEl.style.color = 'var(--text-primary)';
-      }
-
-      if (smokeAlert) {
-        smokeRow.style.backgroundColor = 'var(--toss-red-light)';
-        smokeRow.style.color = 'var(--toss-red)';
-        smokeValEl.style.color = 'var(--toss-red)';
-      } else {
-        smokeRow.style.backgroundColor = '#f9fafb';
-        smokeRow.style.color = 'var(--text-primary)';
-        smokeValEl.style.color = 'var(--text-primary)';
-      }
-
-      if (tempAlert || smokeAlert) {
-        btnEmergencyReset.className = 'toss-btn disabled';
-        btnEmergencyReset.textContent = '안전 상태 확인 중...';
-        btnEmergencyReset.disabled = true;
-        btnSimResetAlert.style.display = 'none';
-      } else {
-        btnEmergencyReset.className = 'toss-btn danger';
-        btnEmergencyReset.textContent = '비상 상황 해제';
-        btnEmergencyReset.disabled = false;
-        btnSimResetAlert.style.display = 'block';
-      }
-    }
-
-    function triggerEmergencyState(tempAlert, smokeAlert) {
-      if (chargingTimer) clearInterval(chargingTimer);
-      
-      chargingState = 'alarm';
-      
-      // Play high pitch Web Audio warning siren loop
-      sound.startBuzzerAlarm();
-      
-      // Update safety UI Card styles
-      safetyBadge.className = 'badge red';
-      safetyBadge.textContent = '위험 (경보)';
-      cardSafety.style.backgroundColor = 'var(--toss-red-light)';
-      
-      if (tempAlert && smokeAlert) {
-        safetyHeadline.textContent = '⚠️ 충전 패드 고온 및 연기 동시 감지!';
-        lblTempDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">[위험] 온도 수치 극도로 높음 (45°C 이상)</span>';
-        lblSmokeDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">[위험] 연기 감지 농도 초과 (300ppm 초과)</span>';
-      } else if (tempAlert) {
-        safetyHeadline.textContent = '⚠️ 충전 패드 고온 경보 감지!';
-        lblTempDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">[경고] 충전 패드 과열 감지 (45°C 이상)</span>';
-      } else {
-        safetyHeadline.textContent = '⚠️ 충전 패드 주변 연기 감지!';
-        lblSmokeDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">[경고] 연기 농도 초과 (300ppm 초과)</span>';
-      }
-
-      // Open relay immediately to prevent fire
-      valRelay.className = 'badge red';
-      valRelay.textContent = '차단됨 (비상)';
-      lblRelayDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">전원 공급 차단: 안전 전력 긴급 차단</span>';
-      
-      // Turn active charge displays off
-      chargeBadge.className = 'badge red';
-      chargeBadge.textContent = '충전 불가';
-      chargeHeadline.textContent = '긴급 위험 감지로 인해 무선 충전 패드의 전원이 자동 차단되었습니다.';
-      btnAction.className = 'toss-btn disabled';
-      btnAction.textContent = '위험 감지로 인해 충전 제한됨';
-      chargeProgressTrack.style.display = 'none';
-      
-      valPower.textContent = '0.0';
-      valTime.textContent = '차단됨';
-      
-      // Dynamic header welcome text update if we are on Home page
-      const currentActiveTab = document.querySelector('.nav-tab-btn.active').getAttribute('data-tab');
-      if (currentActiveTab === 'Home') {
-        headerWelcome.innerHTML = `<span style="color:var(--toss-red);">위험 감지</span> 충전 차단됨`;
-      }
-      
-      cybertruckImg.style.filter = 'drop-shadow(0 8px 16px rgba(240,68,56,0.25))';
-      
-      // Open red emergency alert popup relative to the phone container
-      dlgEmergency.show();
-      document.querySelector('.phone-container').classList.add('alarm-active');
-      
-      updateEmergencyModal(tempAlert, smokeAlert);
-      
-      logNfc(`[경보 발령] ${tempAlert ? '패드 과열' : ''} ${smokeAlert ? '주변 연기' : ''} 안전 수치 초과!`);
-      logNfc('[긴급 차단] 충전 패드 전원 공급 강제 차단 완료', true);
-      logNfc('[경보 조치] 스마트 충전기 비상 경보음 출력 개시');
-      
-      showNotice("비상 경보 감지: 전원 차단");
-    }
-
-    // Reset Alarm Button Actions
-    function resetAlarmState() {
-      sound.playClick();
-      sound.stopBuzzerAlarm();
-      
-      if (dlgEmergency.open) {
-        dlgEmergency.close();
-      }
-      document.querySelector('.phone-container').classList.remove('alarm-active');
-      
-      const currentActiveTab = document.querySelector('.nav-tab-btn.active').getAttribute('data-tab');
-      if (currentActiveTab === 'Home') {
-        headerWelcome.innerHTML = `안녕하세요, 게스트님`;
-      }
-      
-      chargingState = 'standby';
-      isNfcScanned = false;
-
-      if (chargeStartTimeout) {
-        clearTimeout(chargeStartTimeout);
-        chargeStartTimeout = null;
-      }
-
-      logNfc('[경보 해제] 시스템 정상 복구 완료');
-      logNfc('[시스템] 스마트 카드 태그 대기 상태 진입');
-
-      chkSimAlign.checked = true;
-      onAlignmentChanged(true);
-
-      btnSimResetAlert.style.display = 'none';
-      showNotice("경보 해제 완료");
-    }
-
-    btnSimResetAlert.addEventListener('click', resetAlarmState);
-    btnEmergencyReset.addEventListener('click', resetAlarmState);
-
-    // MAP INTERACTION SYSTEM
-    mapPins.forEach((pin, index) => {
-      pin.addEventListener('click', () => {
-        sound.playClick();
-        const spotId = index + 1;
-        
-        // Remove selection from all cards
-        mapCards.forEach(c => c.classList.remove('selected'));
-        
-        // Select matching card
-        const targetCard = document.getElementById(`spotCard${spotId}`);
-        targetCard.classList.add('selected');
-        
-        // Scroll card into view inside map view
-        targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        
-        showNotice(`무선 충전 ${spotId}호기 선택됨`);
-      });
-    });
-
-    mapCards.forEach((card, index) => {
-      card.addEventListener('click', () => {
-        sound.playClick();
-        const spotId = index + 1;
-        
-        mapCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        
-        // Visual effect on corresponding Pin
-        const pin = document.getElementById(`mapPin${spotId}`);
-        pin.style.transform = 'scale(1.3) translate(0, -5px)';
-        setTimeout(() => pin.style.transform = 'scale(1)', 400);
-        
-        showNotice(`무선 충전 ${spotId}호기 선택됨`);
-      });
-    });
-
-    // Default startup triggers
-    chkSimAlign.dispatchEvent(new Event('change'));
-    
-    // Battery level setup in status bar
-    statusBatteryFill.style.width = '85%';
-
-  </script>
 </body>
 </html>
