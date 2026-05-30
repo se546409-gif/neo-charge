@@ -328,7 +328,12 @@
         showNotice("경보 상태: 카드 등록 불가");
         return;
       }
-      
+
+      if (chargingState === 'charging') {
+        showNotice("충전 중에는 카드 인증이 불가합니다");
+        return;
+      }
+
       // Random mock card hex UID
       const uids = ["4A 8B C3 F2", "D1 82 9A 40", "04 7F A3 B2"];
       const randomUid = uids[Math.floor(Math.random() * uids.length)];
@@ -621,7 +626,7 @@
         const costKRW = Math.round(kWhUsed * 265);
         const spotNum = Math.floor(Math.random() * 3) + 1;
         const now = new Date();
-        const dateStr = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')} ${now.getHours() < 12 ? '오전' : '오후'} ${now.getHours() < 12 ? now.getHours() : now.getHours() - 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const dateStr = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')} ${now.getHours() < 12 ? '오전' : '오후'} ${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
 
         if (parseFloat(kWhUsed) > 0) {
           chargeHistory.unshift({
