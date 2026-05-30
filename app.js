@@ -894,6 +894,11 @@
     btnSimResetAlert.addEventListener('click', resetAlarmState);
     btnEmergencyReset.addEventListener('click', resetAlarmState);
 
+    document.getElementById('btnEmergencyClose').addEventListener('click', () => {
+      sound.playClick();
+      if (dlgEmergency.open) dlgEmergency.close();
+    });
+
     // Retry Charging button handler
     if (btnSimRetryCharge) {
       btnSimRetryCharge.addEventListener('click', retryCharging);
