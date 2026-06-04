@@ -895,6 +895,7 @@
     btnEmergencyReset.addEventListener('click', resetAlarmState);
     document.getElementById('btnEmergencyClose').addEventListener('click', () => {
       if (dlgEmergency.open) dlgEmergency.close();
+      document.querySelector('.phone-container').classList.remove('alarm-active');
     });
 
     // Retry Charging button handler
