@@ -590,6 +590,10 @@
     btnAction.addEventListener('click', () => {
       sound.playClick();
       if (chargingState === 'ready_to_charge') {
+        if (!isNfcScanned) {
+          showNotice("NFC 카드 태그 후 시작 가능합니다");
+          return;
+        }
         startChargingSession();
       } else if (chargingState === 'charging') {
         stopChargingSession('user');
@@ -636,7 +640,10 @@
         valRange.textContent = currentRange;
         statusBatteryFill.style.width = `${batteryLevel}%`;
 
-        chargeProgressBar.style.width = `${batteryLevel}%`;
+        const chargeProgress = chargeStartBattery >= 100
+          ? 100
+          : ((batteryLevel - chargeStartBattery) / (100 - chargeStartBattery)) * 100;
+        chargeProgressBar.style.width = `${chargeProgress}%`;
 
         const minsLeft = Math.ceil((100 - batteryLevel) * 0.8);
         valTime.textContent = `${minsLeft}분 남음`;
@@ -729,6 +736,10 @@
 
     function retryCharging() {
       sound.playClick();
+      if (!isNfcScanned) {
+        showNotice("NFC 카드 태그 후 시작 가능합니다");
+        return;
+      }
       if (chargingState === 'ready_to_charge' && isAligned) {
         // Reset battery for a fresh charging session
         batteryLevel = 20;
