@@ -115,6 +115,18 @@
 
     const sound = new PremiumAudioEngine();
 
+    // Safety alarm thresholds
+    const TEMP_THRESHOLD = 45.0;   // °C
+    const SMOKE_THRESHOLD = 300;   // ppm
+
+    // localStorage-safe helpers (private browsing / quota safe)
+    function safeGetItem(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function safeSetItem(key, value) {
+      try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
+    }
+
     function setBadge(el, colorClass) {
       el.className = 'badge-sq ' + colorClass;
       el.textContent = '';
@@ -663,6 +675,9 @@
         logNfc('[충전 완료] 배터리 충전 100% 도달로 인한 자동 종료');
         showNotice("충전 완료");
         if (btnSimRetryCharge) btnSimRetryCharge.style.display = 'block';
+
+        // 한 세션=한 인증: 완료 후 정렬 해제→복귀 시 NFC 재인증 요구
+        isNfcScanned = false;
       }
     }
 
@@ -731,9 +746,9 @@
 
     // Safety rules trigger checking
     function checkSafetyThresholds() {
-      // Alarm thresholds: Temp > 45C OR Smoke > 300 ppm
-      const isTempCritical = temperatureVal >= 45.0;
-      const isSmokeCritical = smokeVal >= 300;
+      // Alarm thresholds: Temp >= TEMP_THRESHOLD OR Smoke >= SMOKE_THRESHOLD
+      const isTempCritical = temperatureVal >= TEMP_THRESHOLD;
+      const isSmokeCritical = smokeVal >= SMOKE_THRESHOLD;
       
       if (chargingState === 'alarm') {
         if (dlgEmergency.open) {
@@ -906,11 +921,6 @@
       valRelay.className = 'badge green';
       valRelay.textContent = '대기 (안전)';
       lblRelayDetail.textContent = '전원 공급 대기 중';
-      const tempRow = document.getElementById('dlgEmergencyTempRow') || document.querySelector('[id*="TempRow"]');
-      document.querySelectorAll('.safety-row').forEach(row => {
-        row.style.backgroundColor = '';
-        row.style.color = '';
-      });
 
       logNfc('[경보 해제] 시스템 정상 복구 완료');
       logNfc('[시스템] 스마트 카드 태그 대기 상태 진입');
@@ -948,7 +958,7 @@
       const otpError          = document.getElementById('otpError');
       const phoneRowValue     = document.getElementById('phoneRowValue');
 
-      let registeredPhone = localStorage.getItem('registeredPhone') || null;
+      let registeredPhone = safeGetItem('registeredPhone') || null;
       let generatedOtp    = null;
 
       function formatPhoneDisplay(num) {
@@ -972,6 +982,7 @@
       }
 
       function openSheet() {
+        generatedOtp = null;
         phoneStep1.style.display = 'block';
         phoneStep2.style.display = 'none';
         phoneStep3.style.display = 'none';
@@ -1005,10 +1016,11 @@
       }
 
       function verifyOtp() {
-        if (otpInput.value.trim() === generatedOtp) {
+        if (generatedOtp && otpInput.value.trim() === generatedOtp) {
           const num = phoneInput.value.replace(/\D/g, '');
           registeredPhone = num;
-          localStorage.setItem('registeredPhone', num);
+          generatedOtp = null;
+          safeSetItem('registeredPhone', num);
           document.getElementById('phoneSuccess').textContent =
             `${formatPhoneDisplay(num)} 번호가 연동되었습니다.`;
           phoneStep2.style.display = 'none';
@@ -1053,19 +1065,29 @@
       });
     });
 
+    let pinAnimTimeout = null;
     mapCards.forEach((card, index) => {
       card.addEventListener('click', () => {
         sound.playClick();
         const spotId = index + 1;
-        
+
         mapCards.forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
-        
+
+        // Reset all pins first so only one is enlarged at a time
+        if (pinAnimTimeout) clearTimeout(pinAnimTimeout);
+        mapPins.forEach(p => p.style.transform = 'scale(1)');
+
         // Visual effect on corresponding Pin
         const pin = document.getElementById(`mapPin${spotId}`);
-        pin.style.transform = 'scale(1.3) translate(0, -5px)';
-        setTimeout(() => pin.style.transform = 'scale(1)', 400);
-        
+        if (pin) {
+          pin.style.transform = 'scale(1.3) translate(0, -5px)';
+          pinAnimTimeout = setTimeout(() => {
+            pin.style.transform = 'scale(1)';
+            pinAnimTimeout = null;
+          }, 400);
+        }
+
         showNotice(`무선 충전 ${spotId}호기 선택됨`);
       });
     });
@@ -1081,7 +1103,7 @@
     const themeDetail = document.getElementById('themeDetail');
     
     // Load saved theme
-    const savedTheme = localStorage.getItem('neo-charge-theme') || 'light';
+    const savedTheme = safeGetItem('neo-charge-theme') || 'light';
     if (savedTheme === 'dark') {
       document.querySelector('.phone-container').setAttribute('data-theme', 'dark');
       chkThemeDark.checked = true;
@@ -1094,11 +1116,11 @@
       if (chkThemeDark.checked) {
         container.setAttribute('data-theme', 'dark');
         themeDetail.textContent = '다크 모드';
-        localStorage.setItem('neo-charge-theme', 'dark');
+        safeSetItem('neo-charge-theme', 'dark');
       } else {
         container.removeAttribute('data-theme');
         themeDetail.textContent = '라이트 모드';
-        localStorage.setItem('neo-charge-theme', 'light');
+        safeSetItem('neo-charge-theme', 'light');
       }
     });
 
