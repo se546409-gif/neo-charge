@@ -747,7 +747,7 @@
         valBattery.textContent = batteryLevel;
         valRange.textContent = currentRange;
         statusBatteryFill.style.width = `${batteryLevel}%`;
-        chargeProgressBar.style.width = `${batteryLevel}%`;
+        chargeProgressBar.style.width = '0%';
         valTime.textContent = `${Math.ceil((100 - batteryLevel) * 0.8)}분 남음`;
 
         startChargingSession();
@@ -757,8 +757,6 @@
       } else if (!isAligned) {
         showNotice("정위치 주차 후 재시도해 주세요");
         logNfc('[충전 재시도 불가] 차량 주차 위치 이탈');
-      } else {
-        showNotice("NFC 인증 후 재시도해 주세요");
       }
     }
 
