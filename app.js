@@ -239,6 +239,12 @@
       setTimeout(() => hudNotice.classList.remove('visible'), 1600);
     }
 
+    // Pre-warm AudioContext on first user interaction so alarm can fire without prior sound toggle
+    document.querySelector('.phone-container').addEventListener('pointerdown', () => {
+      if (!sound.ctx) sound.init();
+      else if (sound.ctx.state === 'suspended') sound.ctx.resume();
+    }, { once: true });
+
     // Toggle mute
     btnMuteToggle.addEventListener('click', () => {
       isMuted = !isMuted;
