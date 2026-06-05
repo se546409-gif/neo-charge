@@ -15,7 +15,15 @@
 
   <!-- Phone Viewport Frame -->
   <div class="phone-container">
-    
+    <!-- Apply saved theme before render to avoid light→dark flash (FOUC) -->
+    <script>
+      try {
+        if (localStorage.getItem('neo-charge-theme') === 'dark') {
+          document.querySelector('.phone-container').setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    </script>
+
     <!-- Sound HUD Alert -->
     <div id="hudNotice" class="hud-notice">
       <svg aria-hidden="true" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +194,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
               </svg>
             </div>
-            <span class="badge blue" id="carStatusBadge">대기 중</span>
+            <span class="badge-sq blue" id="carStatusBadge"></span>
           </div>
           
           <!-- Accordion content container -->
@@ -217,7 +225,7 @@
           <div class="toss-card-title" style="margin-bottom: 0;">
             <div style="display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="badge blue" id="chargeBadge">대기 중</span>
+                <span class="badge-sq gray" id="chargeBadge"></span>
                 <span style="font-size: 1.05rem; font-weight: 700;" id="chargeHeadline">올바른 주차 위치 확인 및 NFC 인증을 대기하고 있습니다.</span>
               </div>
             </div>
@@ -471,6 +479,18 @@
         <!-- Settings Groups -->
         <div class="toss-card settings-card">
           <div class="settings-list-group">
+            <div class="settings-row" id="rowManagePhone">
+              <div class="settings-row-left">
+                <span class="title">휴대폰 번호 연동</span>
+                <span class="detail">알림 수신 및 본인 확인용</span>
+              </div>
+              <div class="settings-row-value" id="phoneRowValue">
+                미등록
+                <svg style="width: 14px; height: 14px; color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
             <div class="settings-row" id="rowManageNfc">
               <div class="settings-row-left">
                 <span class="title">NFC 스마트 카드</span>
@@ -521,14 +541,6 @@
           </div>
         </div>
 
-        <!-- App Information Group -->
-        <div class="toss-card" style="padding: 16px 20px;">
-          <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center;">
-            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">NEO CHARGE</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">버전 1.0.0 (Build 20240524)</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">ⓒ 2024 NEO Charge Team</span>
-          </div>
-        </div>
       </div>
     </div> <!-- Page Views Wrapper End -->
 
@@ -580,7 +592,6 @@
         </button>
       </div>
     </div>
-
 
     <!-- Administrator Demo Settings Console (Globally overlayable above bottom navigation) -->
     <div class="simulation-panel collapsed" id="simDrawer">

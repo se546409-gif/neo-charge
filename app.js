@@ -72,29 +72,37 @@
       }
 
       startBuzzerAlarm() {
-        if (!this.enabled || !this.ctx || this.alarmInterval) return;
+        if (this.alarmInterval) return;
+        // Emergency alarm always plays regardless of mute state
+        if (!this.ctx) {
+          try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          } catch(e) { return; }
+        }
         this.init();
-        
+
+        let phase = 0;
         const playTone = () => {
-          if (!this.enabled || !this.ctx) return;
+          if (!this.ctx) return;
           const now = this.ctx.currentTime;
+          const freq = phase % 2 === 0 ? 960 : 700;
+          phase++;
+
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-          
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(800, now);
-          osc.frequency.linearRampToValueAtTime(400, now + 0.35);
-          
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
           osc.start(now);
-          osc.stop(now + 0.4);
+          osc.stop(now + 0.45);
         };
-        
+
         playTone();
-        this.alarmInterval = setInterval(playTone, 600);
+        this.alarmInterval = setInterval(playTone, 460);
       }
 
       stopBuzzerAlarm() {
@@ -106,6 +114,26 @@
     }
 
     const sound = new PremiumAudioEngine();
+
+    // Safety alarm thresholds
+    const TEMP_THRESHOLD = 45.0;   // °C
+    const SMOKE_THRESHOLD = 300;   // ppm
+
+    // localStorage-safe helpers (private browsing / quota safe)
+    function safeGetItem(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function safeSetItem(key, value) {
+      try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
+    }
+
+    function setBadge(el, colorClass) {
+      el.className = 'badge-sq ' + colorClass;
+      el.textContent = '';
+      el.classList.remove('badge-popping');
+      void el.offsetWidth;
+      el.classList.add('badge-popping');
+    }
 
     // DOM References
     const statusBarTime = document.getElementById('statusBarTime');
@@ -380,8 +408,7 @@
       if (isAligned) {
         alignmentDot.className = 'alignment-dot aligned';
         alignmentText.textContent = '정위치 주차 완료';
-        carStatusBadge.className = 'badge blue';
-        carStatusBadge.textContent = '대기 중';
+        setBadge(carStatusBadge, 'blue');
         carStatusSubText.textContent = '무선 충전 주차 구역에 올바르게 주차되어 있어요';
 
         document.querySelector('.phone-container').classList.remove('align-warning-active');
@@ -392,15 +419,13 @@
         if (isNfcScanned) {
           setChargingState('ready_to_charge');
         } else {
-          chargeBadge.className = 'badge blue';
-          chargeBadge.textContent = '인증 필요';
-          chargeHeadline.textContent = '무선 충전을 위해 회원 카드를 NFC 인식기에 접촉해 주세요.';
+          setBadge(chargeBadge, 'amber');
+          chargeHeadline.textContent = '무선 충전을 위해 카드를 NFC 인식기에 접촉해 주세요.';
         }
       } else {
         alignmentDot.className = 'alignment-dot';
         alignmentText.textContent = '주차 위치 이탈 (대기)';
-        carStatusBadge.className = 'badge amber';
-        carStatusBadge.textContent = '위치 이탈';
+        setBadge(carStatusBadge, 'amber');
         carStatusSubText.textContent = '충전 구역 내 올바른 위치에 차량을 주차해 주세요';
 
         // Stop charging if alignment is lost
@@ -519,8 +544,7 @@
       chargingState = state;
       
       if (state === 'standby') {
-        chargeBadge.className = 'badge amber';
-        chargeBadge.textContent = '대기 중';
+        setBadge(chargeBadge, 'gray');
         chargeHeadline.textContent = '올바른 주차 위치 확인 및 NFC 인증을 대기하고 있습니다.';
         btnAction.className = 'toss-btn disabled';
         btnAction.textContent = 'NFC 인증 완료 시 충전 가능';
@@ -535,15 +559,13 @@
         
         cybertruckImg.style.filter = 'drop-shadow(0 8px 16px rgba(0,0,0,0.12))';
       } else if (state === 'ready_to_charge') {
-        chargeBadge.className = 'badge blue';
-        chargeBadge.textContent = '충전 준비 완료';
+        setBadge(chargeBadge, 'blue');
         chargeHeadline.textContent = '무선 연결에 성공했습니다. 충전을 시작할 수 있습니다.';
         btnAction.className = 'toss-btn';
         btnAction.textContent = '무선 충전 시작하기';
         chargeProgressTrack.style.display = 'none';
       } else if (state === 'charging') {
-        chargeBadge.className = 'badge green';
-        chargeBadge.textContent = '충전 중';
+        setBadge(chargeBadge, 'green');
         chargeHeadline.textContent = '차량에 전력을 안전하게 공급하고 있습니다.';
         btnAction.className = 'toss-btn danger';
         btnAction.textContent = '충전 중단하기';
@@ -653,6 +675,9 @@
         logNfc('[충전 완료] 배터리 충전 100% 도달로 인한 자동 종료');
         showNotice("충전 완료");
         if (btnSimRetryCharge) btnSimRetryCharge.style.display = 'block';
+
+        // 한 세션=한 인증: 완료 후 정렬 해제→복귀 시 NFC 재인증 요구
+        isNfcScanned = false;
       }
     }
 
@@ -721,9 +746,9 @@
 
     // Safety rules trigger checking
     function checkSafetyThresholds() {
-      // Alarm thresholds: Temp > 45C OR Smoke > 300 ppm
-      const isTempCritical = temperatureVal >= 45.0;
-      const isSmokeCritical = smokeVal >= 300;
+      // Alarm thresholds: Temp >= TEMP_THRESHOLD OR Smoke >= SMOKE_THRESHOLD
+      const isTempCritical = temperatureVal >= TEMP_THRESHOLD;
+      const isSmokeCritical = smokeVal >= SMOKE_THRESHOLD;
       
       if (chargingState === 'alarm') {
         if (dlgEmergency.open) {
@@ -784,7 +809,7 @@
         btnEmergencyReset.className = 'toss-btn disabled';
         btnEmergencyReset.textContent = '안전 상태 확인 중...';
         btnEmergencyReset.disabled = true;
-        btnSimResetAlert.style.display = 'none';
+        btnSimResetAlert.style.display = 'block';
       } else {
         btnEmergencyReset.className = 'toss-btn danger';
         btnEmergencyReset.textContent = '비상 상황 해제';
@@ -824,8 +849,7 @@
       lblRelayDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">전원 공급 차단: 안전 전력 긴급 차단</span>';
       
       // Turn active charge displays off
-      chargeBadge.className = 'badge red';
-      chargeBadge.textContent = '충전 불가';
+      setBadge(chargeBadge, 'red');
       chargeHeadline.textContent = '긴급 위험 감지로 인해 무선 충전 패드의 전원이 자동 차단되었습니다.';
       btnAction.className = 'toss-btn disabled';
       btnAction.textContent = '위험 감지로 인해 충전 제한됨';
@@ -845,6 +869,12 @@
       // Open red emergency alert popup relative to the phone container
       dlgEmergency.show();
       document.querySelector('.phone-container').classList.add('alarm-active');
+
+      // Auto-expand admin panel so reset button is visible
+      if (simDrawer.classList.contains('collapsed')) {
+        simDrawer.classList.remove('collapsed');
+        simHeader.setAttribute('aria-expanded', 'true');
+      }
       
       updateEmergencyModal(tempAlert, smokeAlert);
       
@@ -862,17 +892,17 @@
     function resetAlarmState() {
       sound.playClick();
       sound.stopBuzzerAlarm();
-      
+
       if (dlgEmergency.open) {
         dlgEmergency.close();
       }
       document.querySelector('.phone-container').classList.remove('alarm-active');
-      
+
       const currentActiveTab = document.querySelector('.nav-tab-btn.active').getAttribute('data-tab');
       if (currentActiveTab === 'Home') {
         headerWelcome.innerHTML = `안녕하세요, 게스트님`;
       }
-      
+
       chargingState = 'standby';
       isNfcScanned = false;
 
@@ -880,6 +910,17 @@
         clearTimeout(chargeStartTimeout);
         chargeStartTimeout = null;
       }
+
+      // 안전 카드 초기화
+      safetyBadge.className = 'badge green';
+      safetyBadge.textContent = '안전';
+      safetyHeadline.textContent = '화재 감지 및 안전 상태 진단 중';
+      cardSafety.style.backgroundColor = 'var(--bg-card)';
+      lblTempDetail.textContent = '측정 온도 정상 범위';
+      lblSmokeDetail.textContent = '대기질 양호 및 연기 없음';
+      valRelay.className = 'badge green';
+      valRelay.textContent = '대기 (안전)';
+      lblRelayDetail.textContent = '전원 공급 대기 중';
 
       logNfc('[경보 해제] 시스템 정상 복구 완료');
       logNfc('[시스템] 스마트 카드 태그 대기 상태 진입');
@@ -895,12 +936,114 @@
     btnEmergencyReset.addEventListener('click', resetAlarmState);
     document.getElementById('btnEmergencyClose').addEventListener('click', () => {
       if (dlgEmergency.open) dlgEmergency.close();
+      document.querySelector('.phone-container').classList.remove('alarm-active');
     });
 
     // Retry Charging button handler
     if (btnSimRetryCharge) {
       btnSimRetryCharge.addEventListener('click', retryCharging);
     }
+
+    // ── Phone Number Registration ──────────────────────────────────────────
+    (function () {
+      const rowManagePhone    = document.getElementById('rowManagePhone');
+      const phoneSheetBackdrop = document.getElementById('phoneSheetBackdrop');
+      const phoneSheet        = document.getElementById('phoneSheet');
+      const phoneStep1        = document.getElementById('phoneStep1');
+      const phoneStep2        = document.getElementById('phoneStep2');
+      const phoneStep3        = document.getElementById('phoneStep3');
+      const phoneInput        = document.getElementById('phoneInput');
+      const otpInput          = document.getElementById('otpInput');
+      const phoneInputError   = document.getElementById('phoneInputError');
+      const otpError          = document.getElementById('otpError');
+      const phoneRowValue     = document.getElementById('phoneRowValue');
+
+      let registeredPhone = safeGetItem('registeredPhone') || null;
+      let generatedOtp    = null;
+
+      function formatPhoneDisplay(num) {
+        if (num.length === 11) return num.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        if (num.length === 10) return num.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+        return num;
+      }
+
+      function updateRowValue() {
+        if (registeredPhone) {
+          phoneRowValue.innerHTML = `<span style="color:var(--toss-blue); font-weight:700;">${formatPhoneDisplay(registeredPhone)}</span>
+            <svg style="width:14px;height:14px;color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>`;
+        } else {
+          phoneRowValue.innerHTML = `미등록
+            <svg style="width:14px;height:14px;color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>`;
+        }
+      }
+
+      function openSheet() {
+        generatedOtp = null;
+        phoneStep1.style.display = 'block';
+        phoneStep2.style.display = 'none';
+        phoneStep3.style.display = 'none';
+        phoneInputError.style.display = 'none';
+        phoneInput.value = registeredPhone || '';
+        otpInput.value = '';
+        phoneSheetBackdrop.style.display = 'block';
+        phoneSheet.style.display = 'block';
+      }
+
+      function closeSheet() {
+        phoneSheetBackdrop.style.display = 'none';
+        phoneSheet.style.display = 'none';
+      }
+
+      function sendOtp() {
+        const num = phoneInput.value.replace(/\D/g, '');
+        if (!/^01[0-9]{8,9}$/.test(num)) {
+          phoneInputError.textContent = '올바른 휴대폰 번호를 입력해주세요.';
+          phoneInputError.style.display = 'block';
+          return;
+        }
+        phoneInputError.style.display = 'none';
+        generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+        document.getElementById('otpDesc').textContent =
+          `${formatPhoneDisplay(num)}으로 인증번호를 발송했습니다. (시뮬레이션: ${generatedOtp})`;
+        otpError.style.display = 'none';
+        otpInput.value = '';
+        phoneStep1.style.display = 'none';
+        phoneStep2.style.display = 'block';
+      }
+
+      function verifyOtp() {
+        if (generatedOtp && otpInput.value.trim() === generatedOtp) {
+          const num = phoneInput.value.replace(/\D/g, '');
+          registeredPhone = num;
+          generatedOtp = null;
+          safeSetItem('registeredPhone', num);
+          document.getElementById('phoneSuccess').textContent =
+            `${formatPhoneDisplay(num)} 번호가 연동되었습니다.`;
+          phoneStep2.style.display = 'none';
+          phoneStep3.style.display = 'block';
+          updateRowValue();
+        } else {
+          otpError.textContent = '인증번호가 올바르지 않습니다.';
+          otpError.style.display = 'block';
+          otpInput.value = '';
+        }
+      }
+
+      updateRowValue();
+
+      rowManagePhone.addEventListener('click', () => { sound.playClick(); openSheet(); });
+      phoneSheetBackdrop.addEventListener('click', closeSheet);
+      document.getElementById('btnSendOtp').addEventListener('click', sendOtp);
+      document.getElementById('btnVerifyOtp').addEventListener('click', verifyOtp);
+      document.getElementById('btnResendOtp').addEventListener('click', sendOtp);
+      document.getElementById('btnPhoneDone').addEventListener('click', closeSheet);
+      otpInput.addEventListener('keydown', e => { if (e.key === 'Enter') verifyOtp(); });
+      phoneInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendOtp(); });
+    })();
 
     // MAP INTERACTION SYSTEM
     mapPins.forEach((pin, index) => {
@@ -922,19 +1065,29 @@
       });
     });
 
+    let pinAnimTimeout = null;
     mapCards.forEach((card, index) => {
       card.addEventListener('click', () => {
         sound.playClick();
         const spotId = index + 1;
-        
+
         mapCards.forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
-        
+
+        // Reset all pins first so only one is enlarged at a time
+        if (pinAnimTimeout) clearTimeout(pinAnimTimeout);
+        mapPins.forEach(p => p.style.transform = 'scale(1)');
+
         // Visual effect on corresponding Pin
         const pin = document.getElementById(`mapPin${spotId}`);
-        pin.style.transform = 'scale(1.3) translate(0, -5px)';
-        setTimeout(() => pin.style.transform = 'scale(1)', 400);
-        
+        if (pin) {
+          pin.style.transform = 'scale(1.3) translate(0, -5px)';
+          pinAnimTimeout = setTimeout(() => {
+            pin.style.transform = 'scale(1)';
+            pinAnimTimeout = null;
+          }, 400);
+        }
+
         showNotice(`무선 충전 ${spotId}호기 선택됨`);
       });
     });
@@ -950,7 +1103,7 @@
     const themeDetail = document.getElementById('themeDetail');
     
     // Load saved theme
-    const savedTheme = localStorage.getItem('neo-charge-theme') || 'light';
+    const savedTheme = safeGetItem('neo-charge-theme') || 'light';
     if (savedTheme === 'dark') {
       document.querySelector('.phone-container').setAttribute('data-theme', 'dark');
       chkThemeDark.checked = true;
@@ -963,11 +1116,11 @@
       if (chkThemeDark.checked) {
         container.setAttribute('data-theme', 'dark');
         themeDetail.textContent = '다크 모드';
-        localStorage.setItem('neo-charge-theme', 'dark');
+        safeSetItem('neo-charge-theme', 'dark');
       } else {
         container.removeAttribute('data-theme');
         themeDetail.textContent = '라이트 모드';
-        localStorage.setItem('neo-charge-theme', 'light');
+        safeSetItem('neo-charge-theme', 'light');
       }
     });
 

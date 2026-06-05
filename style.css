@@ -460,32 +460,44 @@
     }
 
     /* Badge Component */
+    @keyframes badge-pop {
+      0%   { transform: translateY(8px); opacity: 0; }
+      100% { transform: translateY(0);   opacity: 1; }
+    }
+
+    /* 텍스트 있는 기존 뱃지 (safetyBadge, valRelay, 지도 등) */
     .badge {
       font-size: 0.75rem;
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 8px;
+      display: inline-block;
     }
 
-    .badge.green {
-      background-color: var(--toss-green-light);
-      color: var(--toss-green);
+    .badge.green  { background-color: var(--toss-green-light);  color: var(--toss-green); }
+    .badge.red    { background-color: var(--toss-red-light);    color: var(--toss-red); }
+    .badge.blue   { background-color: var(--toss-blue-light);   color: var(--toss-blue); }
+    .badge.amber  { background-color: var(--toss-amber-light);  color: var(--toss-amber); }
+    .badge.gray   { background-color: #f2f4f6;                  color: var(--text-secondary); }
+
+    /* 상태 네모 인디케이터 (chargeBadge, carStatusBadge) */
+    .badge-sq {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: inline-block;
     }
 
-    .badge.red {
-      background-color: var(--toss-red-light);
-      color: var(--toss-red);
+    .badge-sq.badge-popping {
+      animation: badge-pop 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .badge.blue {
-      background-color: var(--toss-blue-light);
-      color: var(--toss-blue);
-    }
-
-    .badge.amber {
-      background-color: var(--toss-amber-light);
-      color: var(--toss-amber);
-    }
+    .badge-sq.green  { background-color: var(--toss-green); }
+    .badge-sq.red    { background-color: var(--toss-red); }
+    .badge-sq.blue   { background-color: var(--toss-blue); }
+    .badge-sq.amber  { background-color: var(--toss-amber); }
+    .badge-sq.gray   { background-color: #c8cdd4; }
 
     /* Collapsible My Car Card Styles */
     .car-card {
@@ -1066,28 +1078,26 @@
       color: var(--text-secondary);
     }
 
-    [data-theme="dark"] .badge.green {
-      background-color: var(--toss-green-light);
-      color: #4ade80;
-    }
+    [data-theme="dark"] .badge.green  { background-color: var(--toss-green-light); color: #4ade80; }
+    [data-theme="dark"] .badge.amber  { background-color: var(--toss-amber-light); color: #fbbf24; }
+    [data-theme="dark"] .badge.gray   { background-color: #2a2d35; color: var(--text-secondary); }
+    [data-theme="dark"] .badge.red    { background-color: var(--toss-red-light); color: #f87171; }
+    [data-theme="dark"] .badge.blue   { background-color: var(--toss-blue-light); color: #6ea8fe; }
 
-    [data-theme="dark"] .badge.amber {
-      background-color: var(--toss-amber-light);
-      color: #fbbf24;
-    }
-
-    [data-theme="dark"] .badge.red {
-      background-color: var(--toss-red-light);
-      color: #f87171;
-    }
-
-    [data-theme="dark"] .badge.blue {
-      background-color: var(--toss-blue-light);
-      color: #6ea8fe;
-    }
+    [data-theme="dark"] .badge-sq.green  { background-color: #4ade80; }
+    [data-theme="dark"] .badge-sq.amber  { background-color: #fbbf24; }
+    [data-theme="dark"] .badge-sq.gray   { background-color: #6b7280; }
+    [data-theme="dark"] .badge-sq.red    { background-color: #f87171; }
+    [data-theme="dark"] .badge-sq.blue   { background-color: #6ea8fe; }
 
     [data-theme="dark"] #iptCarPlate::placeholder {
       color: var(--text-muted);
+    }
+
+    #otpInput::placeholder {
+      letter-spacing: 0;
+      font-size: 0.88rem;
+      font-weight: 500;
     }
 
     @media (min-width: 768px) {
