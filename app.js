@@ -212,6 +212,7 @@
     let batteryLevel = 76;
     let currentRange = 428;
     let chargingState = 'standby'; // 'standby', 'ready_to_charge', 'charging', 'alarm'
+    let safetyResetAnimId = null;
     let isNfcScanned = false;
     let temperatureVal = 24.5;
     let smokeVal = 82;
@@ -936,6 +937,37 @@
 
       btnSimResetAlert.style.display = 'none';
       showNotice("경보 해제 완료");
+
+      // Animate sensor values back down to safe levels
+      if (safetyResetAnimId) cancelAnimationFrame(safetyResetAnimId);
+      const animStartTemp = temperatureVal;
+      const animStartSmoke = smokeVal;
+      const animTargetTemp = 24.5;
+      const animTargetSmoke = 82;
+      const animDuration = 2800;
+      const animStart = performance.now();
+
+      function animateSensorDrop(now) {
+        const t = Math.min((now - animStart) / animDuration, 1);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+
+        temperatureVal = animStartTemp + (animTargetTemp - animStartTemp) * eased;
+        smokeVal = Math.round(animStartSmoke + (animTargetSmoke - animStartSmoke) * eased);
+
+        valTemp.textContent = temperatureVal.toFixed(1);
+        valSmoke.textContent = smokeVal;
+        lblSimTemp.textContent = `${temperatureVal.toFixed(1)}°C`;
+        lblSimSmoke.textContent = `${smokeVal} ppm`;
+        rngSimTemp.value = temperatureVal;
+        rngSimSmoke.value = smokeVal;
+
+        if (t < 1) {
+          safetyResetAnimId = requestAnimationFrame(animateSensorDrop);
+        } else {
+          safetyResetAnimId = null;
+        }
+      }
+      safetyResetAnimId = requestAnimationFrame(animateSensorDrop);
     }
 
     btnSimResetAlert.addEventListener('click', resetAlarmState);
