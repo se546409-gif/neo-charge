@@ -115,8 +115,8 @@
 
     const sound = new PremiumAudioEngine();
 
-    function setBadge(el, newClass) {
-      el.className = newClass;
+    function setBadge(el, colorClass) {
+      el.className = 'badge-sq ' + colorClass;
       el.textContent = '';
       el.classList.remove('badge-popping');
       void el.offsetWidth;
@@ -396,7 +396,7 @@
       if (isAligned) {
         alignmentDot.className = 'alignment-dot aligned';
         alignmentText.textContent = '정위치 주차 완료';
-        setBadge(carStatusBadge, 'badge blue');
+        setBadge(carStatusBadge, 'blue');
         carStatusSubText.textContent = '무선 충전 주차 구역에 올바르게 주차되어 있어요';
 
         document.querySelector('.phone-container').classList.remove('align-warning-active');
@@ -407,13 +407,13 @@
         if (isNfcScanned) {
           setChargingState('ready_to_charge');
         } else {
-          setBadge(chargeBadge, 'badge amber');
+          setBadge(chargeBadge, 'amber');
           chargeHeadline.textContent = '무선 충전을 위해 카드를 NFC 인식기에 접촉해 주세요.';
         }
       } else {
         alignmentDot.className = 'alignment-dot';
         alignmentText.textContent = '주차 위치 이탈 (대기)';
-        setBadge(carStatusBadge, 'badge amber');
+        setBadge(carStatusBadge, 'amber');
         carStatusSubText.textContent = '충전 구역 내 올바른 위치에 차량을 주차해 주세요';
 
         // Stop charging if alignment is lost
@@ -532,7 +532,7 @@
       chargingState = state;
       
       if (state === 'standby') {
-        setBadge(chargeBadge, 'badge gray');
+        setBadge(chargeBadge, 'gray');
         chargeHeadline.textContent = '올바른 주차 위치 확인 및 NFC 인증을 대기하고 있습니다.';
         btnAction.className = 'toss-btn disabled';
         btnAction.textContent = 'NFC 인증 완료 시 충전 가능';
@@ -547,13 +547,13 @@
         
         cybertruckImg.style.filter = 'drop-shadow(0 8px 16px rgba(0,0,0,0.12))';
       } else if (state === 'ready_to_charge') {
-        setBadge(chargeBadge, 'badge blue');
+        setBadge(chargeBadge, 'blue');
         chargeHeadline.textContent = '무선 연결에 성공했습니다. 충전을 시작할 수 있습니다.';
         btnAction.className = 'toss-btn';
         btnAction.textContent = '무선 충전 시작하기';
         chargeProgressTrack.style.display = 'none';
       } else if (state === 'charging') {
-        setBadge(chargeBadge, 'badge green');
+        setBadge(chargeBadge, 'green');
         chargeHeadline.textContent = '차량에 전력을 안전하게 공급하고 있습니다.';
         btnAction.className = 'toss-btn danger';
         btnAction.textContent = '충전 중단하기';
@@ -834,7 +834,7 @@
       lblRelayDetail.innerHTML = '<span style="color:var(--toss-red); font-weight:700;">전원 공급 차단: 안전 전력 긴급 차단</span>';
       
       // Turn active charge displays off
-      setBadge(chargeBadge, 'badge red');
+      setBadge(chargeBadge, 'red');
       chargeHeadline.textContent = '긴급 위험 감지로 인해 무선 충전 패드의 전원이 자동 차단되었습니다.';
       btnAction.className = 'toss-btn disabled';
       btnAction.textContent = '위험 감지로 인해 충전 제한됨';
