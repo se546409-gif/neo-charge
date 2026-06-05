@@ -72,29 +72,37 @@
       }
 
       startBuzzerAlarm() {
-        if (!this.enabled || !this.ctx || this.alarmInterval) return;
+        if (this.alarmInterval) return;
+        // Emergency alarm always plays regardless of mute state
+        if (!this.ctx) {
+          try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          } catch(e) { return; }
+        }
         this.init();
-        
+
+        let phase = 0;
         const playTone = () => {
-          if (!this.enabled || !this.ctx) return;
+          if (!this.ctx) return;
           const now = this.ctx.currentTime;
+          const freq = phase % 2 === 0 ? 960 : 700;
+          phase++;
+
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-          
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(800, now);
-          osc.frequency.linearRampToValueAtTime(400, now + 0.35);
-          
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
           osc.start(now);
-          osc.stop(now + 0.4);
+          osc.stop(now + 0.45);
         };
-        
+
         playTone();
-        this.alarmInterval = setInterval(playTone, 600);
+        this.alarmInterval = setInterval(playTone, 460);
       }
 
       stopBuzzerAlarm() {
