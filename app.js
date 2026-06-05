@@ -784,7 +784,7 @@
         btnEmergencyReset.className = 'toss-btn disabled';
         btnEmergencyReset.textContent = '안전 상태 확인 중...';
         btnEmergencyReset.disabled = true;
-        btnSimResetAlert.style.display = 'none';
+        btnSimResetAlert.style.display = 'block';
       } else {
         btnEmergencyReset.className = 'toss-btn danger';
         btnEmergencyReset.textContent = '비상 상황 해제';
@@ -845,6 +845,12 @@
       // Open red emergency alert popup relative to the phone container
       dlgEmergency.show();
       document.querySelector('.phone-container').classList.add('alarm-active');
+
+      // Auto-expand admin panel so reset button is visible
+      if (simDrawer.classList.contains('collapsed')) {
+        simDrawer.classList.remove('collapsed');
+        simHeader.setAttribute('aria-expanded', 'true');
+      }
       
       updateEmergencyModal(tempAlert, smokeAlert);
       
