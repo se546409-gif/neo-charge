@@ -909,6 +909,105 @@
       btnSimRetryCharge.addEventListener('click', retryCharging);
     }
 
+    // ── Phone Number Registration ──────────────────────────────────────────
+    (function () {
+      const rowManagePhone    = document.getElementById('rowManagePhone');
+      const phoneSheetBackdrop = document.getElementById('phoneSheetBackdrop');
+      const phoneSheet        = document.getElementById('phoneSheet');
+      const phoneStep1        = document.getElementById('phoneStep1');
+      const phoneStep2        = document.getElementById('phoneStep2');
+      const phoneStep3        = document.getElementById('phoneStep3');
+      const phoneInput        = document.getElementById('phoneInput');
+      const otpInput          = document.getElementById('otpInput');
+      const phoneInputError   = document.getElementById('phoneInputError');
+      const otpError          = document.getElementById('otpError');
+      const phoneRowValue     = document.getElementById('phoneRowValue');
+
+      let registeredPhone = localStorage.getItem('registeredPhone') || null;
+      let generatedOtp    = null;
+
+      function formatPhoneDisplay(num) {
+        if (num.length === 11) return num.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        if (num.length === 10) return num.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+        return num;
+      }
+
+      function updateRowValue() {
+        if (registeredPhone) {
+          phoneRowValue.innerHTML = `<span style="color:var(--toss-blue); font-weight:700;">${formatPhoneDisplay(registeredPhone)}</span>
+            <svg style="width:14px;height:14px;color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>`;
+        } else {
+          phoneRowValue.innerHTML = `미등록
+            <svg style="width:14px;height:14px;color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>`;
+        }
+      }
+
+      function openSheet() {
+        phoneStep1.style.display = 'block';
+        phoneStep2.style.display = 'none';
+        phoneStep3.style.display = 'none';
+        phoneInputError.style.display = 'none';
+        phoneInput.value = registeredPhone || '';
+        otpInput.value = '';
+        phoneSheetBackdrop.style.display = 'block';
+        phoneSheet.style.display = 'block';
+      }
+
+      function closeSheet() {
+        phoneSheetBackdrop.style.display = 'none';
+        phoneSheet.style.display = 'none';
+      }
+
+      function sendOtp() {
+        const num = phoneInput.value.replace(/\D/g, '');
+        if (!/^01[0-9]{8,9}$/.test(num)) {
+          phoneInputError.textContent = '올바른 휴대폰 번호를 입력해주세요.';
+          phoneInputError.style.display = 'block';
+          return;
+        }
+        phoneInputError.style.display = 'none';
+        generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+        document.getElementById('otpDesc').textContent =
+          `${formatPhoneDisplay(num)}으로 인증번호를 발송했습니다. (시뮬레이션: ${generatedOtp})`;
+        otpError.style.display = 'none';
+        otpInput.value = '';
+        phoneStep1.style.display = 'none';
+        phoneStep2.style.display = 'block';
+      }
+
+      function verifyOtp() {
+        if (otpInput.value.trim() === generatedOtp) {
+          const num = phoneInput.value.replace(/\D/g, '');
+          registeredPhone = num;
+          localStorage.setItem('registeredPhone', num);
+          document.getElementById('phoneSuccess').textContent =
+            `${formatPhoneDisplay(num)} 번호가 연동되었습니다.`;
+          phoneStep2.style.display = 'none';
+          phoneStep3.style.display = 'block';
+          updateRowValue();
+        } else {
+          otpError.textContent = '인증번호가 올바르지 않습니다.';
+          otpError.style.display = 'block';
+          otpInput.value = '';
+        }
+      }
+
+      updateRowValue();
+
+      rowManagePhone.addEventListener('click', () => { sound.playClick(); openSheet(); });
+      phoneSheetBackdrop.addEventListener('click', closeSheet);
+      document.getElementById('btnSendOtp').addEventListener('click', sendOtp);
+      document.getElementById('btnVerifyOtp').addEventListener('click', verifyOtp);
+      document.getElementById('btnResendOtp').addEventListener('click', sendOtp);
+      document.getElementById('btnPhoneDone').addEventListener('click', closeSheet);
+      otpInput.addEventListener('keydown', e => { if (e.key === 'Enter') verifyOtp(); });
+      phoneInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendOtp(); });
+    })();
+
     // MAP INTERACTION SYSTEM
     mapPins.forEach((pin, index) => {
       pin.addEventListener('click', () => {
