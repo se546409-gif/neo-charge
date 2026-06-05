@@ -487,6 +487,11 @@
       color: var(--toss-amber);
     }
 
+    .badge.gray {
+      background-color: #f2f4f6;
+      color: var(--text-secondary);
+    }
+
     /* Collapsible My Car Card Styles */
     .car-card {
       padding: 20px 24px;
@@ -1074,6 +1079,11 @@
     [data-theme="dark"] .badge.amber {
       background-color: var(--toss-amber-light);
       color: #fbbf24;
+    }
+
+    [data-theme="dark"] .badge.gray {
+      background-color: #2a2d35;
+      color: var(--text-secondary);
     }
 
     [data-theme="dark"] .badge.red {
