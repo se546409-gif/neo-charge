@@ -460,36 +460,43 @@
     }
 
     /* Badge Component */
+    @keyframes badge-pop {
+      0%   { transform: scale(0); opacity: 0; }
+      55%  { transform: scale(1.5); opacity: 1; }
+      80%  { transform: scale(0.85); }
+      100% { transform: scale(1); }
+    }
+
     .badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .badge.badge-popping {
+      animation: badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     .badge.green {
-      background-color: var(--toss-green-light);
-      color: var(--toss-green);
+      background-color: var(--toss-green);
     }
 
     .badge.red {
-      background-color: var(--toss-red-light);
-      color: var(--toss-red);
+      background-color: var(--toss-red);
     }
 
     .badge.blue {
-      background-color: var(--toss-blue-light);
-      color: var(--toss-blue);
+      background-color: var(--toss-blue);
     }
 
     .badge.amber {
-      background-color: var(--toss-amber-light);
-      color: var(--toss-amber);
+      background-color: var(--toss-amber);
     }
 
     .badge.gray {
-      background-color: #f2f4f6;
-      color: var(--text-secondary);
+      background-color: #c8cdd4;
     }
 
     /* Collapsible My Car Card Styles */
@@ -1071,30 +1078,11 @@
       color: var(--text-secondary);
     }
 
-    [data-theme="dark"] .badge.green {
-      background-color: var(--toss-green-light);
-      color: #4ade80;
-    }
-
-    [data-theme="dark"] .badge.amber {
-      background-color: var(--toss-amber-light);
-      color: #fbbf24;
-    }
-
-    [data-theme="dark"] .badge.gray {
-      background-color: #2a2d35;
-      color: var(--text-secondary);
-    }
-
-    [data-theme="dark"] .badge.red {
-      background-color: var(--toss-red-light);
-      color: #f87171;
-    }
-
-    [data-theme="dark"] .badge.blue {
-      background-color: var(--toss-blue-light);
-      color: #6ea8fe;
-    }
+    [data-theme="dark"] .badge.green  { background-color: #4ade80; }
+    [data-theme="dark"] .badge.amber  { background-color: #fbbf24; }
+    [data-theme="dark"] .badge.gray   { background-color: #6b7280; }
+    [data-theme="dark"] .badge.red    { background-color: #f87171; }
+    [data-theme="dark"] .badge.blue   { background-color: #6ea8fe; }
 
     [data-theme="dark"] #iptCarPlate::placeholder {
       color: var(--text-muted);
