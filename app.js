@@ -877,17 +877,17 @@
     function resetAlarmState() {
       sound.playClick();
       sound.stopBuzzerAlarm();
-      
+
       if (dlgEmergency.open) {
         dlgEmergency.close();
       }
       document.querySelector('.phone-container').classList.remove('alarm-active');
-      
+
       const currentActiveTab = document.querySelector('.nav-tab-btn.active').getAttribute('data-tab');
       if (currentActiveTab === 'Home') {
         headerWelcome.innerHTML = `안녕하세요, 게스트님`;
       }
-      
+
       chargingState = 'standby';
       isNfcScanned = false;
 
@@ -895,6 +895,22 @@
         clearTimeout(chargeStartTimeout);
         chargeStartTimeout = null;
       }
+
+      // 안전 카드 초기화
+      safetyBadge.className = 'badge green';
+      safetyBadge.textContent = '안전';
+      safetyHeadline.textContent = '화재 감지 및 안전 상태 진단 중';
+      cardSafety.style.backgroundColor = 'var(--bg-card)';
+      lblTempDetail.textContent = '측정 온도 정상 범위';
+      lblSmokeDetail.textContent = '대기질 양호 및 연기 없음';
+      valRelay.className = 'badge green';
+      valRelay.textContent = '대기 (안전)';
+      lblRelayDetail.textContent = '전원 공급 대기 중';
+      const tempRow = document.getElementById('dlgEmergencyTempRow') || document.querySelector('[id*="TempRow"]');
+      document.querySelectorAll('.safety-row').forEach(row => {
+        row.style.backgroundColor = '';
+        row.style.color = '';
+      });
 
       logNfc('[경보 해제] 시스템 정상 복구 완료');
       logNfc('[시스템] 스마트 카드 태그 대기 상태 진입');
