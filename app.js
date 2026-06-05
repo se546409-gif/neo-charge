@@ -764,6 +764,9 @@
         return;
       }
 
+      // 차량 미주차 상태에서는 충전 패드가 비활성이므로 경보 미발령
+      if (!isAligned) return;
+
       if (isTempCritical || isSmokeCritical) {
         triggerEmergencyState(isTempCritical, isSmokeCritical);
       } else {
